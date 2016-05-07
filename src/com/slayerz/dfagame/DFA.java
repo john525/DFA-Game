@@ -1,5 +1,6 @@
 package com.slayerz.dfagame;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.HashMap;
@@ -56,6 +57,7 @@ public class DFA {
 			int xf = end.c*Game.BOX_DIM;
 			int yf = end.r*Game.BOX_DIM;
 			g2d.setPaint(Color.BLACK);
+			g2d.setStroke(new BasicStroke(4));
 			g2d.drawLine(x,y,xf,yf);
 		}
 	}
@@ -83,90 +85,79 @@ public class DFA {
 		return true;
 	}
 	
-	public void removeState(int r, int c) {
-		if(r==1 && c==1) {
+	public void removeState(Coord loc) {
+		if(loc.r==1 && loc.c==1) {
 			return;
 		}
-		System.out.println(states.remove(new Coord(r,c)));
+		System.out.println(states.remove(loc));
 	}
 	
-	public void addTransition(int r, int c, int rf, int cf, String str) {
-		State q1 = states.get(new Coord(r, c));
-		State q2 = states.get(new Coord(rf, cf));
+	public void addTransition(Coord loc, Coord locf, String str) {
+		State q1 = states.get(loc);
+		State q2 = states.get(locf);
 		if(q1 == null || q2 == null) return;
 		transitions.add(new Transition(q1, q2, str));
 	}
 	
-	public boolean onStateSpace(int x, int y) {
+	/**
+	 * Finds the coordinates (in terms of rows and columns on the 5x5 grid) of the nearest grid space to the specified point.
+	 * @param x_int Integer x coordinate
+	 * @param y_int Integer y coordinate.
+	 * @return 
+	 */
+	public Coord nearestGridSpace(int x_int, int y_int) {
+		double x = x_int;
+		double y = y_int;
 		int r = (int)Math.round(y/Game.BOX_DIM);
 		int c = (int)Math.round(x/Game.BOX_DIM);
-		double xGrid = Game.BOX_DIM*c;
-		double yGrid = Game.BOX_DIM*r;
+		return new Coord(r, c);
+	}
+	
+	/**
+	 * Tests whether a point (x,y) is sufficiently close to a grid space (within DFA.CLICK_RAD) for the click to be registered as
+	 * affecting that grid space.
+	 * @param x the x coordinate.
+	 * @param y the y coordinate
+	 * @return true if (x,y) is within DFA.CLICK_RAD of the nearest grid space
+	 */
+	public boolean onStateSpace(int x, int y) {
+		Coord loc = nearestGridSpace(x,y);
+		double xGrid = Game.BOX_DIM*loc.c;
+		double yGrid = Game.BOX_DIM*loc.r;
 		double dx=Math.abs(x-xGrid);
 		double dy=Math.abs(y-yGrid);
 		double dist = Math.sqrt(dx*dx + dy*dy);
 		return dist < CLICK_RAD;
 	}
 	
+	/**
+	 * checks whether the user clicked a state on the grid.
+	 * @param x the x coordinate.
+	 * @param y the y coordinate
+	 * @return true if (x,y) is within DFA.CLICK_RAD of the nearest grid space AND there is a state at that grid space
+	 */
 	public boolean onState(int x, int y) {
-		int r = (int)Math.round(y/Game.BOX_DIM);
-		int c = (int)Math.round(x/Game.BOX_DIM);
-		double xGrid = Game.BOX_DIM*c;
-		double yGrid = Game.BOX_DIM*r;
-		double dx=Math.abs(x-xGrid);
-		double dy=Math.abs(y-yGrid);
-		double dist = Math.sqrt(dx*dx + dy*dy);
-		return dist < CLICK_RAD && (states.get(new Coord(r, c)) != null);
+		Coord loc = nearestGridSpace(x,y);
+		return onStateSpace(x,y) && (states.get(loc) != null);
 	}
 	
 	public void handleCtrlClick(int x, int y) {
-		int r = (int)Math.round(y/Game.BOX_DIM);
-		int c = (int)Math.round(x/Game.BOX_DIM);
-		double xGrid = Game.BOX_DIM*c;
-		double yGrid = Game.BOX_DIM*r;
-		double dx=Math.abs(x-xGrid);
-		double dy=Math.abs(y-yGrid);
-		double dist = Math.sqrt(dx*dx + dy*dy);
-		if(dist < CLICK_RAD) {
-			removeState(r,c);
+		if(onState(x,y)) {
+			Coord loc = nearestGridSpace(x,y);
+			removeState(loc);
 		}
 	}
 
 	public void handleAltClick(int x, int y) {
-		int r = (int)Math.round(y/Game.BOX_DIM);
-		int c = (int)Math.round(x/Game.BOX_DIM);
-		double xGrid = Game.BOX_DIM*c;
-		double yGrid = Game.BOX_DIM*r;
-		double dx=Math.abs(x-xGrid);
-		double dy=Math.abs(y-yGrid);
-		double dist = Math.sqrt(dx*dx + dy*dy);
-		if(dist < CLICK_RAD) {
-			states.get(new Coord(r,c)).toggleAccept();
+		if(onState(x,y)) {
+			states.get(nearestGridSpace(x,y)).toggleAccept();
 		}
 	}
 
 	public void handleDrag(int x, int y, int xf, int yf) {
-		int r = (int)Math.round(y/Game.BOX_DIM);
-		int c = (int)Math.round(x/Game.BOX_DIM);
-		double xGrid = Game.BOX_DIM*c;
-		double yGrid = Game.BOX_DIM*r;
-		double dx=Math.abs(x-xGrid);
-		double dy=Math.abs(y-yGrid);
-		double dist = Math.sqrt(dx*dx + dy*dy);
-		if(dist > CLICK_RAD) {
-			return;
+		if(onStateSpace(x,y) && onStateSpace(xf,yf)) {
+			addTransition(nearestGridSpace(x,y),nearestGridSpace(xf,yf),"0");
 		}
-		int rf = (int)Math.round(yf/Game.BOX_DIM);
-		int cf = (int)Math.round(xf/Game.BOX_DIM);
-		xGrid = Game.BOX_DIM*cf;
-		yGrid = Game.BOX_DIM*rf;
-		dx=Math.abs(xf-xGrid);
-		dy=Math.abs(yf-yGrid);
-		dist = Math.sqrt(dx*dx + dy*dy);
-		if(dist > CLICK_RAD) {
-			return;
-		}
-		addTransition(r,c,rf,cf,"0");
 	}
 	
 	public void handleShiftDrag(int x, int y, int xf, int yf) {

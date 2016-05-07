@@ -1,7 +1,5 @@
 package com.slayerz.dfagame;
 
-import java.awt.Graphics2D;
-
 public class Transition {
 	
 	private State start;

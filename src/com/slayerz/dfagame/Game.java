@@ -1,11 +1,14 @@
 package com.slayerz.dfagame;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -17,12 +20,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
 public class Game {
 	
 	private JFrame frame;
 	private GamePanel gamePanel;
 	private JLabel text;
+	private Timer timer;
+	
 	private DFA dfa;
 	
 	//user input stuff
@@ -69,6 +75,17 @@ public class Game {
 		text.setHorizontalAlignment(SwingConstants.CENTER);
 		frame.add(text, BorderLayout.SOUTH);
 		frame.setVisible(true);
+		
+		timer = new Timer(1000/30, new Animator());
+		timer.setInitialDelay(0);
+		timer.start(); 
+	}
+	
+	private class Animator implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			gamePanel.repaint();
+		}
 	}
 	
 	private class GamePanel extends JPanel {
@@ -79,12 +96,14 @@ public class Game {
 			g2d.fillRect(0, 0, DIM, DIM);
 			g2d.setPaint(Color.GRAY);
 			for(int i=1; i<=LINES; i++){
+				g2d.setStroke(new BasicStroke(1));
 				g2d.drawLine((int)(i*BOX_DIM), 0, (int)(i*BOX_DIM), DIM);
 				g2d.drawLine(0, (int)(i*BOX_DIM), DIM, (int)(i*BOX_DIM));
 			}
 			dfa.draw(g2d);
 			
 			if(drawingTransition) {
+				g2d.setStroke(new BasicStroke(4));
 				g2d.setPaint(Color.GRAY);
 				g2d.drawLine(startX, startY, currentX, currentY);
 			}
@@ -111,7 +130,6 @@ public class Game {
 			else {
 				dfa.handleClick(e.getX(), e.getY());
 			}
-			gamePanel.repaint();
 		}
 
 		@Override
@@ -184,14 +202,12 @@ public class Game {
 		public void mouseDragged(MouseEvent e) {
 			currentX = e.getX();
 			currentY = e.getY();
-			gamePanel.repaint();
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			currentX = e.getX();
 			currentY = e.getY();
-			gamePanel.repaint();
 		}
 		
 	}
