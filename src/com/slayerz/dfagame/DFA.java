@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 public class DFA {
 	private State start;
 	private Map<Coord, State> states;
@@ -59,6 +61,8 @@ public class DFA {
 			g2d.setPaint(Color.BLACK);
 			g2d.setStroke(new BasicStroke(4));
 			g2d.drawLine(x,y,xf,yf);
+			
+			//TODO draw arrows to show direction of transitions, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
 		}
 	}
 	
@@ -70,7 +74,6 @@ public class DFA {
 		double dx=Math.abs(x-xGrid);
 		double dy=Math.abs(y-yGrid);
 		double dist = Math.sqrt(dx*dx + dy*dy);
-		System.out.println(dist);
 		if(dist < CLICK_RAD) {
 			addState(r, c, new State(false));
 		}
@@ -89,7 +92,7 @@ public class DFA {
 		if(loc.r==1 && loc.c==1) {
 			return;
 		}
-		System.out.println(states.remove(loc));
+		states.remove(loc);
 	}
 	
 	public void addTransition(Coord loc, Coord locf, String str) {
@@ -155,8 +158,15 @@ public class DFA {
 	}
 
 	public void handleDrag(int x, int y, int xf, int yf) {
-		if(onStateSpace(x,y) && onStateSpace(xf,yf)) {
-			addTransition(nearestGridSpace(x,y),nearestGridSpace(xf,yf),"0");
+		if(onStateSpace(x,y) && onStateSpace(xf,yf) && (!nearestGridSpace(x,y).equals(nearestGridSpace(xf,yf)))) {
+			//dialog
+			Object[] opts = {"0", "1", "0 or 1"};
+			String s = (String)JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
+					"Specify transition character", JOptionPane.PLAIN_MESSAGE, null, opts, "0");
+			if(s.equals("0 or 1")) {
+				s="01";
+			}
+			addTransition(nearestGridSpace(x,y),nearestGridSpace(xf,yf),s);
 		}
 	}
 	
@@ -188,6 +198,11 @@ public class DFA {
 				return r==k.getR() && c==k.getC();
 			}
 			return false;
+		}
+		
+		@Override
+		public String toString() {
+			return "(r="+r+",c="+c+")";
 		}
 	}
 

@@ -160,6 +160,7 @@ public class Game {
 				dfa.handleShiftDrag(startX, startY, endX, endY);
 			}
 			else {
+				
 				dfa.handleDrag(startX, startY, endX, endY);
 			}
 			startX = startY = -10;
