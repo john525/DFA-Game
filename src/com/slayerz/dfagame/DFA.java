@@ -46,28 +46,42 @@ public class DFA {
 	}
 	
 	public void draw(Graphics2D g2d) {
-		//draw arrow to start state;
-		g2d.setPaint(Color.GREEN);
-        	g2d.setStroke(new BasicStroke(4));
-        	g2d.drawLine(0, 0, Game.BOX_DIM, Game.BOX_DIM);
+        //Draw arrow to start state;
+        g2d.setPaint(Color.GREEN);
+        g2d.setStroke(new BasicStroke(4));
+        g2d.drawLine(0, 0, Game.BOX_DIM, Game.BOX_DIM);
 
-		for(Coord c : states.keySet()) {
-			states.get(c).draw(c.getR(), c.getC(), g2d);
-		}
-		for(Transition t : transitions) {
-			Coord start = locateState(t.getStart());
-			Coord end = locateState(t.getEnd());
-			int x = start.c*Game.BOX_DIM;
-			int y = start.r*Game.BOX_DIM;
-			int xf = end.c*Game.BOX_DIM;
-			int yf = end.r*Game.BOX_DIM;
-			g2d.setPaint(Color.BLACK);
-			g2d.setStroke(new BasicStroke(4));
-			g2d.drawLine(x,y,xf,yf);
-			
-			//TODO draw arrows to show direction of transitions, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
-		}
-	}
+        //Draw each state.
+        for (Coord c : states.keySet()) {
+            states.get(c).draw(c.getR(), c.getC(), g2d);
+        }
+
+        //Draw each transition.
+        for (Transition t : transitions) {
+            Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
+
+            int fuzzingAmount = 1;
+            int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
+            int xOffSet, yOffSet;
+
+            int stateDeltaX = x - xf;
+            int stateDeltaY = yf - y;
+
+            if (stateDeltaX != 0) { //The tangent of the angle between the start state and the transition is defined.
+                double angleBetweenStartStateAndTransition = Math.atan(stateDeltaY / stateDeltaX);
+                xOffSet = (int) (State.RAD * Math.cos(angleBetweenStartStateAndTransition) + fuzzingAmount);
+                yOffSet = (int) (State.RAD * Math.sin(angleBetweenStartStateAndTransition) + fuzzingAmount);
+            } else { //Start and end states are in same column but different rows.
+                xOffSet = 0;
+                yOffSet = State.RAD + fuzzingAmount;
+            }
+
+            g2d.setPaint(Color.BLACK);
+            g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
+
+            //TODO draw arrows to show direction of transitions, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
+        }
+    }
 	
 	public void handleClick(double x, double y) {
 		int r = (int)Math.round(y/Game.BOX_DIM);
