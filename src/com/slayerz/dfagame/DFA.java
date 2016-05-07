@@ -47,7 +47,10 @@ public class DFA {
 	
 	public void draw(Graphics2D g2d) {
 		//draw arrow to start state;
-		
+		g2d.setPaint(Color.GREEN);
+        	g2d.setStroke(new BasicStroke(4));
+        	g2d.drawLine(0, 0, Game.BOX_DIM, Game.BOX_DIM);
+
 		for(Coord c : states.keySet()) {
 			states.get(c).draw(c.getR(), c.getC(), g2d);
 		}
