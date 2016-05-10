@@ -45,7 +45,7 @@ public class DFA {
 		return null;
 	}
 	
-	public void draw(Graphics2D g2d) {
+public void draw(Graphics2D g2d) {
         //Draw arrow to start state;
         g2d.setPaint(Color.GREEN);
         g2d.setStroke(new BasicStroke(4));
@@ -60,6 +60,12 @@ public class DFA {
         for (Transition t : transitions) {
             Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
 
+            if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
+                Coord temp = new Coord(start.r, start.c);
+                start = end;
+                end = temp;
+            }
+
             int fuzzingAmount = 1;
             int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
             int xOffSet, yOffSet;
@@ -68,9 +74,9 @@ public class DFA {
             int stateDeltaY = yf - y;
 
             if (stateDeltaX != 0) { //The tangent of the angle between the start state and the transition is defined.
-                double angleBetweenStartStateAndTransition = Math.atan(stateDeltaY / stateDeltaX);
-                xOffSet = (int) (State.RAD * Math.cos(angleBetweenStartStateAndTransition) + fuzzingAmount);
-                yOffSet = (int) (State.RAD * Math.sin(angleBetweenStartStateAndTransition) + fuzzingAmount);
+                double angleBetweenStartStateAndTransition = end.c >= start.c ? Math.atan(stateDeltaY / stateDeltaX) : Math.PI + Math.atan(stateDeltaY/stateDeltaX); //Ternary operators are good for readability.
+                xOffSet = ((int) (State.RAD * Math.cos(angleBetweenStartStateAndTransition))) + fuzzingAmount;
+                yOffSet = stateDeltaY != 0 ? ((int) (State.RAD * Math.sin(angleBetweenStartStateAndTransition))) + fuzzingAmount : 0;
             } else { //Start and end states are in same column but different rows.
                 xOffSet = 0;
                 yOffSet = State.RAD + fuzzingAmount;
