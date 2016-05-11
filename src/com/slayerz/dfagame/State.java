@@ -12,7 +12,7 @@ public class State {
 		isAccept = accept;
 	}
 	
-	public boolean isAccpet() {
+	public boolean isAccept() {
 		return isAccept;
 	}
 	

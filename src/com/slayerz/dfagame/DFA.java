@@ -72,20 +72,37 @@ public class DFA {
 
             int stateDeltaX = x - xf;
             int stateDeltaY = yf - y;
-
+            
+            double angleStartToTransition;
+            
             if (stateDeltaX != 0) { //The tangent of the angle between the start state and the transition is defined.
-                double angleBetweenStartStateAndTransition = end.c >= start.c ? Math.atan(stateDeltaY / stateDeltaX) : Math.PI + Math.atan(stateDeltaY/stateDeltaX); //Ternary operators are good for readability.
-                xOffSet = ((int) (State.RAD * Math.cos(angleBetweenStartStateAndTransition))) + fuzzingAmount;
-                yOffSet = stateDeltaY != 0 ? ((int) (State.RAD * Math.sin(angleBetweenStartStateAndTransition))) + fuzzingAmount : 0;
+            	angleStartToTransition = end.c >= start.c ? Math.atan(stateDeltaY / stateDeltaX) : Math.PI + Math.atan(stateDeltaY/stateDeltaX);
+            	//Ternary operators are good for readability.
+                xOffSet = ((int) (State.RAD * Math.cos(angleStartToTransition))) + fuzzingAmount;
+                yOffSet = stateDeltaY != 0 ? ((int) (State.RAD * Math.sin(angleStartToTransition))) + fuzzingAmount : 0;
             } else { //Start and end states are in same column but different rows.
+            	angleStartToTransition = end.r <= start.r ? -Math.PI/2 : Math.PI/2;
                 xOffSet = 0;
                 yOffSet = State.RAD + fuzzingAmount;
             }
-
+            
+            double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
+            int[] arrowXCoordinates = {
+            		(int)(xf - xOffSet*0.9), //0.9 moves the arrow tip closer into the state
+            		(int)(xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI/4)), //pi/4 changes width of the arrow
+            		(int)(xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI/4)) };
+            
+            int[] arrowYCoordinates = {
+        			(int)(yf + yOffSet*0.9), 
+        			(int)(yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition - Math.PI/4)), 
+        			(int)(yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI/4)) };
+            
             g2d.setPaint(Color.BLACK);
             g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
+            g2d.setPaint(Color.GREEN);
+            g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
 
-            //TODO draw arrows to show direction of transitions, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
+            //TODO fix arrows, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
         }
     }
 
