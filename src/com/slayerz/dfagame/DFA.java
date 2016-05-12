@@ -91,12 +91,14 @@ public class DFA {
             int[] arrowXCoordinates = {
                     (int) (xf - xOffSet * 0.9), //0.9 moves the arrow tip closer into the state
                     (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI / 4)), //pi/4 changes width of the arrow
-                    (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI / 4))};
+                    (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI / 4))
+            };
 
             int[] arrowYCoordinates = {
                     (int) (yf + yOffSet * 0.9),
                     (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition - Math.PI / 4)),
-                    (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))};
+                    (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
+            };
 
             g2d.setPaint(Color.BLACK);
             g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
