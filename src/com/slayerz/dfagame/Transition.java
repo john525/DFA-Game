@@ -5,11 +5,13 @@ public class Transition {
     private State start;
     private State end;
     private String chars;
+    private Alphabet symbol;
 
-    public Transition(State s, State e, String c) {
+    public Transition(State s, State e, String c, Alphabet transition) {
         start = s;
         end = e;
         chars = c;
+        symbol = transition;
     }
 
     public State getStart() {
@@ -22,6 +24,10 @@ public class Transition {
 
     public String getChars() {
         return chars;
+    }
+
+    public Alphabet getSymbol() {
+        return symbol;
     }
 
     public boolean accepts(String l) {

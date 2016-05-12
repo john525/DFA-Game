@@ -90,7 +90,8 @@ public class DFA {
             double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
             int[] arrowXCoordinates = {
                     (int) (xf - xOffSet * 0.9), //0.9 moves the arrow tip closer into the state
-                    (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI / 4)), //pi/4 changes width of the arrow
+                    (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI / 4)),
+                    // PI/4 changes width of the arrow
                     (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI / 4))
             };
 
@@ -138,11 +139,11 @@ public class DFA {
         states.remove(loc);
     }
 
-    public void addTransition(Coord loc, Coord locf, String str) {
+    public void addTransition(Coord loc, Coord locf, String str, Alphabet symbol) {
         State q1 = states.get(loc);
         State q2 = states.get(locf);
         if (q1 == null || q2 == null) return;
-        transitions.add(new Transition(q1, q2, str));
+        transitions.add(new Transition(q1, q2, str, symbol));
     }
 
     /**
@@ -207,12 +208,26 @@ public class DFA {
         if (onStateSpace(x, y) && onStateSpace(xf, yf) && (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
             //dialog
             Object[] opts = {"0", "1", "0 or 1"};
+            Alphabet transitionSymbol;
+
             String s = (String) JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
                     "Specify transition character", JOptionPane.PLAIN_MESSAGE, null, opts, "0");
+
             if (s.equals("0 or 1")) {
                 s = "01";
             }
-            addTransition(nearestGridSpace(x, y), nearestGridSpace(xf, yf), s);
+
+            if (s.equalsIgnoreCase("0")) {
+                transitionSymbol = Alphabet.ZERO;
+            } else if (s.equalsIgnoreCase("1")) {
+                transitionSymbol = Alphabet.ONE;
+            } else if (s.equalsIgnoreCase("01")) {
+                transitionSymbol = Alphabet.ZEROandONE;
+            } else {
+                transitionSymbol = Alphabet.EPSILON;
+            }
+
+            addTransition(nearestGridSpace(x, y), nearestGridSpace(xf, yf), s, transitionSymbol);
         }
     }
 
