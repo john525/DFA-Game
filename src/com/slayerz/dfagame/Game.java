@@ -15,17 +15,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.Timer;
+import javax.swing.*;
+import javax.swing.border.Border;
 
 public class Game {
     private JFrame frame;
     private GamePanel gamePanel;
     private JLabel text;
     private Timer timer;
+    private JButton runButton;
 
     private DFA dfa;
 
@@ -76,8 +74,11 @@ public class Game {
         //text.setText("regex here");
         text.setVerticalAlignment(SwingConstants.CENTER);
         text.setHorizontalAlignment(SwingConstants.CENTER);
-
         frame.add(text, BorderLayout.SOUTH);
+
+        runButton = new JButton("Click here to test your DFA!");
+        frame.add(runButton, BorderLayout.SOUTH);
+
         frame.setVisible(true);
 
         timer = new Timer(1000 / 30, new GameRunner());
@@ -126,6 +127,7 @@ public class Game {
         }
 
         @Override
+
         public void mouseClicked(MouseEvent e) {
             if (alt) {
                 dfa.handleAltClick(e.getX(), e.getY());

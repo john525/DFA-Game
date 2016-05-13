@@ -222,6 +222,7 @@ public class DFA {
      * @param y the y coordinate
      * @return true if (x,y) is within DFA.CLICK_RAD of the nearest grid space AND there is a state at that grid space
      */
+
     public boolean onState(int x, int y) {
         Coord loc = nearestGridSpace(x, y);
         return onStateSpace(x, y) && (states.get(loc) != null);
@@ -241,7 +242,7 @@ public class DFA {
     }
 
     public void handleDrag(int x, int y, int xf, int yf) {
-        if (onStateSpace(x, y) && onStateSpace(xf, yf) && (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
+        if (onState(xf, yf) && onStateSpace(x, y) && onStateSpace(xf, yf) && (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
             //dialog
             Object[] opts = {"0", "1", "0 or 1"};
             Alphabet transitionSymbol;
