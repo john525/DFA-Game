@@ -59,26 +59,44 @@ public class Game {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setResizable(false);
+
         gamePanel = new GamePanel();
         gamePanel.setPreferredSize(new Dimension(DIM, DIM));
         gamePanel.setFocusable(true);
         gamePanel.requestFocusInWindow();
+
         StateInputListener s = new StateInputListener();
+
         gamePanel.addMouseListener(s);
         gamePanel.addMouseMotionListener(s);
         gamePanel.addKeyListener(s);
+
         frame.add(gamePanel, BorderLayout.CENTER);
+
         text = new JLabel("regex here");
         text.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
         //text.setText("regex here");
         text.setVerticalAlignment(SwingConstants.CENTER);
         text.setHorizontalAlignment(SwingConstants.CENTER);
+
         frame.add(text, BorderLayout.SOUTH);
         frame.setVisible(true);
 
         timer = new Timer(1000 / 30, new Animator());
+        timer.addActionListener(new GameStatusChecker());
         timer.setInitialDelay(0);
         timer.start();
+    }
+
+    private class GameStatusChecker implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            isDone();
+        }
+    }
+
+    private boolean isDone() {
+
     }
 
     private class Animator implements ActionListener {
