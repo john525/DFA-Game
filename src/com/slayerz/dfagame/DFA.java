@@ -222,7 +222,6 @@ public class DFA {
      * @param y the y coordinate
      * @return true if (x,y) is within DFA.CLICK_RAD of the nearest grid space AND there is a state at that grid space
      */
-
     public boolean onState(int x, int y) {
         Coord loc = nearestGridSpace(x, y);
         return onStateSpace(x, y) && (states.get(loc) != null);
