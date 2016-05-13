@@ -18,12 +18,10 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 public class Game {
-
     private JFrame frame;
     private GamePanel gamePanel;
     private JLabel text;
@@ -82,28 +80,21 @@ public class Game {
         frame.add(text, BorderLayout.SOUTH);
         frame.setVisible(true);
 
-        timer = new Timer(1000 / 30, new Animator());
-        timer.addActionListener(new GameStatusChecker());
+        timer = new Timer(1000 / 30, new GameRunner());
         timer.setInitialDelay(0);
         timer.start();
     }
 
-    private class GameStatusChecker implements ActionListener {
+    private class GameRunner implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            gamePanel.repaint();
             isDone();
         }
     }
 
     private boolean isDone() {
-
-    }
-
-    private class Animator implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            gamePanel.repaint();
-        }
+        return false;
     }
 
     private class GamePanel extends JPanel {

@@ -1,3 +1,10 @@
+/**
+ * @author John Lhota, Thomas Reber, Douglas Wong
+ * <p>
+ * Represents and contains all information pertaining to the displayed DFA.
+ * Handles creation of states and transitions and interactions with them.
+ */
+
 package com.slayerz.dfagame;
 
 import java.awt.BasicStroke;
@@ -11,12 +18,30 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 public class DFA {
+    /**
+     * The start state.
+     */
     private State start;
+
+    /**
+     * The set of states of the DFA mapped by their coordinates on the game grid.
+     */
     private Map<Coord, State> states;
+
+    /**
+     * Set of transitions of this DFA. Roughly corresponds to delta.
+     */
     private Set<Transition> transitions;
 
+    /**
+     * The radius around a state in which a click will be treated as corresponding to that state.
+     */
     public static final int CLICK_RAD = 3 * State.RAD;
 
+    /**
+     * Create a new simple DFA.\
+     * Places a start state in the upper left corner of the game board.
+     */
     public DFA() {
         start = new State(false);
         states = new HashMap<Coord, State>();
@@ -24,10 +49,21 @@ public class DFA {
         transitions = new HashSet<Transition>();
     }
 
+    /**
+     * Determines if the DFA will accept a given string.
+     *
+     * @param s The string to check.
+     * @return Returns true if the string is in the language of the DFA, false otherwise.
+     */
     public boolean acceptsString(String s) {
         return false;
     }
 
+    /**
+     * Test all strings as long as the DFAs pumping length and tests them for acceptance by the DFA.
+     *
+     * @return A map of strings of the pumping length mapped to a boolean representing whether or not they are accepted by the DFA.
+     */
     public Map<String, Boolean> testOnAll() {
         int pumpingLength = states.size() + 1;
         for (int len = 0; len <= pumpingLength; len++) {
