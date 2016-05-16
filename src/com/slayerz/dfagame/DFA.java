@@ -54,7 +54,20 @@ public class DFA {
      * @return Returns true if the string is in the language of the DFA, false otherwise.
      */
     public boolean acceptsString(String s) {
-        return false;
+        State currentState = start;
+        for (char symbol : s.toCharArray()) {
+            Transition transition = null;
+
+            while (transition == null) {
+                for (Transition t : transitions) {
+                    if (t.getStart() == currentState && t.accepts(symbol+ "")) {
+                        transition = t;
+                        break;
+                    }
+                }
+            }
+
+        }
     }
 
     /**
