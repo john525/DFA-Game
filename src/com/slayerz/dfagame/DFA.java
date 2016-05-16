@@ -7,11 +7,14 @@
 
 package com.slayerz.dfagame;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.*;
 import java.util.function.BooleanSupplier;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 
@@ -48,6 +51,25 @@ public class DFA {
     }
 
     /**
+     * Determine whether the DFA accepts the strings it should.
+     *
+     * @param regex The regex to check strings against.
+     * @return True if the DFA only accepts the strings it should and rejects the strings it should. False otherwise.
+     */
+    public boolean MatchesRegex(String regex) {
+        Pattern compiledRegex = Pattern.compile(regex);
+        Map<String, Boolean> dfaResults = testOnAll();
+
+        for (String s : dfaResults.keySet()) {
+            if (compiledRegex.matcher(s).matches() != dfaResults.get(s)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Determines if the DFA will accept a given string.
      *
      * @param s The string to check.
@@ -68,6 +90,8 @@ public class DFA {
             }
 
         }
+
+        return false;
     }
 
     /**
