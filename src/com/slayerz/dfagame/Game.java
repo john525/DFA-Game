@@ -18,16 +18,16 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JButton;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 public class Game {
+
     private JFrame frame;
     private GamePanel gamePanel;
     private JLabel text;
     private Timer timer;
-    private JButton runButton;
 
     private DFA dfa;
 
@@ -78,28 +78,32 @@ public class Game {
         //text.setText("regex here");
         text.setVerticalAlignment(SwingConstants.CENTER);
         text.setHorizontalAlignment(SwingConstants.CENTER);
+
         frame.add(text, BorderLayout.SOUTH);
-
-        runButton = new JButton("Click here to test your DFA!");
-        frame.add(runButton, BorderLayout.SOUTH);
-
         frame.setVisible(true);
 
-        timer = new Timer(1000 / 30, new GameRunner());
+        timer = new Timer(1000 / 30, new Animator());
+        timer.addActionListener(new GameStatusChecker());
         timer.setInitialDelay(0);
         timer.start();
     }
 
-    private class GameRunner implements ActionListener {
+    private class GameStatusChecker implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            gamePanel.repaint();
             isDone();
         }
     }
 
     private boolean isDone() {
         return false;
+    }
+
+    private class Animator implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            gamePanel.repaint();
+        }
     }
 
     private class GamePanel extends JPanel {
@@ -131,7 +135,6 @@ public class Game {
         }
 
         @Override
-
         public void mouseClicked(MouseEvent e) {
             if (alt) {
                 dfa.handleAltClick(e.getX(), e.getY());

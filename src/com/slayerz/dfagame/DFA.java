@@ -10,12 +10,10 @@ package com.slayerz.dfagame;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.BooleanSupplier;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class DFA {
     /**
@@ -65,11 +63,33 @@ public class DFA {
      * @return A map of strings of the pumping length mapped to a boolean representing whether or not they are accepted by the DFA.
      */
     public Map<String, Boolean> testOnAll() {
+        Map<String, Boolean> testResults = new HashMap<>();
         int pumpingLength = states.size() + 1;
-        for (int len = 0; len <= pumpingLength; len++) {
-            //generate all strings of length len and test using acceptsString()
+
+        ArrayList<String> binaryStrings = GenerateBinaryStrings(pumpingLength);
+
+        for (String binaryString : binaryStrings) {
+            testResults.put(binaryString, acceptsString(binaryString));
         }
-        return null;
+
+        return testResults;
+    }
+
+    /**
+     * Generates all string representations of bianry numbers up to a certain length.
+     *
+     * @param length The maximum length of binary string to produced.
+     * @return List of all binary strings of length up to and including length in ascending value order.
+     */
+    public ArrayList<String> GenerateBinaryStrings(int length) {
+        ArrayList<String> binaryStrings = new ArrayList<>();
+        long maximumValue = (long) (Math.pow(2, length) - 1);
+
+        for (int i = 0; i < maximumValue; i++) {
+            binaryStrings.add(Integer.toBinaryString(i));
+        }
+
+        return binaryStrings;
     }
 
     public Coord locateState(State q) {
