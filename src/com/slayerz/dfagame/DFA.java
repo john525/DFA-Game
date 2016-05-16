@@ -7,13 +7,10 @@
 
 package com.slayerz.dfagame;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.*;
-import java.util.function.BooleanSupplier;
 import java.util.regex.Pattern;
 
 import javax.swing.*;
