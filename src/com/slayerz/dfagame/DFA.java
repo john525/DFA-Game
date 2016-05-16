@@ -86,9 +86,10 @@ public class DFA {
                 }
             }
 
+            currentState = transition.getEnd();
         }
 
-        return false;
+        return currentState.isAccept();
     }
 
     /**
