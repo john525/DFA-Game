@@ -1,6 +1,7 @@
 package com.slayerz.dfagame;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Represents the transition function of a DFA.
@@ -13,12 +14,32 @@ public class Delta {
     }
 
     public void AddRule(Transition transition) {
-        transitionRules.add(new Rule(transition.getStart(), transition.getEnd(), transition.getChars()));
+        char[] symbols = transition.getChars().toCharArray();
+        for (char c : symbols) {
+            transitionRules.add(new Rule(transition.getStart(), transition.getEnd(), c));
+        }
     }
 
-    public State GetNextState(State currentState, String symbol) {
+    public void RemoveRule(Transition transition) {
+        Iterator<Rule> i = transitionRules.iterator();
+
+        char[] symbols = transition.getChars().toCharArray();
+        for (char c : symbols) {
+            while (i.hasNext()) {
+                Rule r = i.next();
+
+                if (r.getStart().equals(transition.getStart()) &&
+                        r.getEnd().equals(transition.getEnd()) &&
+                        r.getSymbol() == c) {
+                    transitionRules.remove(r);
+                }
+            }
+        }
+    }
+
+    public State GetNextState(State currentState, char symbol) {
         for (Rule r : transitionRules) {
-            if (r.getStart().equals(currentState) && r.getSymbol().equals(symbol)) {
+            if (r.getStart().equals(currentState) && r.getSymbol() == symbol) {
                 return r.getEnd();
             }
         }
@@ -30,9 +51,9 @@ public class Delta {
     private class Rule {
         public State start;
         public State end;
-        public String symbol;
+        public char symbol;
 
-        public Rule(State start, State end, String symbol) {
+        public Rule(State start, State end, char symbol) {
             this.start = start;
             this.end = end;
             this.symbol = symbol;
@@ -42,6 +63,6 @@ public class Delta {
 
         public State getEnd() { return end; }
 
-        public String getSymbol() { return symbol; }
+        public char getSymbol() { return symbol; }
     }
 }
