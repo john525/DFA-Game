@@ -80,19 +80,8 @@ public class DFA {
      */
     public boolean acceptsString(String s) {
         State currentState = start;
-        for (char symbol : s.toCharArray()) {
-            Transition transition = null;
-
-            while (transition == null) {
-                for (Transition t : transitions) {
-                    if (t.getStart() == currentState && t.accepts(symbol+ "")) {
-                        transition = t;
-                        break;
-                    }
-                }
-            }
-
-            currentState = transition.getEnd();
+        for (char c : s.toCharArray()) {
+            currentState = transitionFunction.GetNextState(currentState, c);
         }
 
         return currentState.isAccept();
