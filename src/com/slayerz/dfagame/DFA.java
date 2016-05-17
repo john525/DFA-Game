@@ -32,6 +32,11 @@ public class DFA {
     private Set<Transition> transitions;
 
     /**
+     * Transition function of the DFA.
+     */
+    private Delta transitionFunction;
+
+    /**
      * The radius around a state in which a click will be treated as corresponding to that state.
      */
     public static final int CLICK_RAD = 3 * State.RAD;
@@ -42,6 +47,7 @@ public class DFA {
      */
     public DFA() {
         start = new State(false);
+        transitionFunction = new Delta();
         states = new HashMap<Coord, State>();
         states.put(new Coord(1, 1), start);
         transitions = new HashSet<Transition>();
@@ -234,8 +240,11 @@ public class DFA {
         State q1 = states.get(loc);
         State q2 = states.get(locf);
         if (q1 == null || q2 == null) return;
-        transitions.add(new Transition(q1, q2, str, symbol));
+        Transition t = new Transition(q1, q2, str, symbol);
+        transitions.add(t);
+        transitionFunction.AddRule(t);
     }
+
 
     /**
      * Finds the coordinates (in terms of rows and columns on the 5x5 grid) of the nearest grid space to the specified point.
