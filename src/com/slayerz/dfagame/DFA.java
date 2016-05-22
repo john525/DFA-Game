@@ -224,11 +224,11 @@ public class DFA {
         }
         State s = states.get(loc);
         Iterator<Transition> it = transitions.iterator();
-        while(it.hasNext()) {
-        	Transition t = it.next();
-        	if(t.connectsTo(s)) {
-        		it.remove();
-        	}
+        while (it.hasNext()) {
+            Transition t = it.next();
+            if (t.connectsTo(s)) {
+                it.remove();
+            }
         }
         states.remove(loc);
     }
