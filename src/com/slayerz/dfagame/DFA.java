@@ -227,6 +227,7 @@ public class DFA {
         while (it.hasNext()) {
             Transition t = it.next();
             if (t.connectsTo(s)) {
+                transitionFunction.RemoveRule(t);
                 it.remove();
             }
         }
