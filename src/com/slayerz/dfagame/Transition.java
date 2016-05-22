@@ -21,7 +21,11 @@ public class Transition {
     public State getEnd() {
         return end;
     }
-
+    
+    public boolean connectsTo(State s) {
+    	return start==s || end==s;
+    }
+    
     public String getChars() {
         return chars;
     }

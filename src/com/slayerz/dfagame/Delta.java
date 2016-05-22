@@ -2,15 +2,16 @@ package com.slayerz.dfagame;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Represents the transition function of a DFA.
  */
 public class Delta {
-    private ArrayList<Rule> transitionRules;
+    private List<Rule> transitionRules;
 
     public Delta() {
-        transitionRules = new ArrayList<>();
+        transitionRules = new ArrayList<Rule>();
     }
 
     public void AddRule(Transition transition) {

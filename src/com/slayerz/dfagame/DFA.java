@@ -93,10 +93,10 @@ public class DFA {
      * @return A map of strings of the pumping length mapped to a boolean representing whether or not they are accepted by the DFA.
      */
     public Map<String, Boolean> testOnAll() {
-        Map<String, Boolean> testResults = new HashMap<>();
+        Map<String, Boolean> testResults = new HashMap<String, Boolean>();
         int pumpingLength = states.size() + 1;
 
-        ArrayList<String> binaryStrings = GenerateBinaryStrings(pumpingLength);
+        List<String> binaryStrings = GenerateBinaryStrings(pumpingLength);
 
         for (String binaryString : binaryStrings) {
             testResults.put(binaryString, acceptsString(binaryString));
@@ -111,8 +111,8 @@ public class DFA {
      * @param length The maximum length of binary string to produced.
      * @return List of all binary strings of length up to and including length in ascending value order.
      */
-    public ArrayList<String> GenerateBinaryStrings(int length) {
-        ArrayList<String> binaryStrings = new ArrayList<>();
+    public List<String> GenerateBinaryStrings(int length) {
+        List<String> binaryStrings = new ArrayList<String>();
         long maximumValue = (long) (Math.pow(2, length) - 1);
 
         for (int i = 0; i < maximumValue; i++) {
@@ -221,6 +221,14 @@ public class DFA {
     public void removeState(Coord loc) {
         if (loc.r == 1 && loc.c == 1) {
             return;
+        }
+        State s = states.get(loc);
+        Iterator<Transition> it = transitions.iterator();
+        while(it.hasNext()) {
+        	Transition t = it.next();
+        	if(t.connectsTo(s)) {
+        		it.remove();
+        	}
         }
         states.remove(loc);
     }
