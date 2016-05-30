@@ -21,10 +21,8 @@ public class State {
     }
 
     public void draw(int r, int c, Graphics2D g2d) {
-        g2d.setPaint(Color.BLACK);
-        if (isAccept) {
-            g2d.setPaint(Color.RED);
-        }
+        g2d.setPaint(isAccept ? Color.RED : Color.BLACK);
+
         g2d.fillOval((int) (c * Game.BOX_DIM) - RAD, (int) (r * Game.BOX_DIM) - RAD, 2 * RAD, 2 * RAD);
     }
 }

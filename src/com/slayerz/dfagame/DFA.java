@@ -146,51 +146,57 @@ public class DFA {
         for (Transition t : transitions) {
             Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
 
-            if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
-                Coord temp = new Coord(start.r, start.c);
-                start = end;
-                end = temp;
+            if (!start.equals(end)) { //Start and end states are different.
+                if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
+                    Coord temp = new Coord(start.r, start.c);
+                    start = end;
+                    end = temp;
+                }
+
+                int fuzzingAmount = 1;
+                int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
+                int xOffSet, yOffSet;
+
+                int stateDeltaX = x - xf;
+                int stateDeltaY = yf - y;
+
+                double angleStartToTransition;
+
+                if (stateDeltaX != 0) { //The tangent of the angle between the start state and the transition is defined.
+                    //Ternary operators are good for readability.
+                    angleStartToTransition = (end.c >= start.c) ? Math.atan(stateDeltaY / stateDeltaX) : (Math.PI + Math.atan(stateDeltaY / stateDeltaX));
+                    xOffSet = ((int) (State.RAD * Math.cos(angleStartToTransition))) + (Math.cos(angleStartToTransition) >= 0 ? fuzzingAmount : -fuzzingAmount);
+                    //Nested ternary operators are even better.
+                    yOffSet = (stateDeltaY != 0) ? (((int) (State.RAD * Math.sin(angleStartToTransition))) + ((Math.sin(angleStartToTransition) >= 0) ? fuzzingAmount : -fuzzingAmount)) : 0;
+                } else { //Start and end states are in same column but different rows.
+                    angleStartToTransition = end.r <= start.r ? -Math.PI / 2 : Math.PI / 2;
+                    xOffSet = 0;
+                    yOffSet = State.RAD + fuzzingAmount;
+                }
+
+                double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
+                int[] arrowXCoordinates = {
+                        (int) (xf - xOffSet * 0.9), //0.9 moves the arrow tip closer into the state
+                        (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI / 4)),
+                        // PI/4 changes width of the arrow
+                        (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI / 4))
+                };
+
+                int[] arrowYCoordinates = {
+                        (int) (yf + yOffSet * 0.9),
+                        (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition - Math.PI / 4)),
+                        (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
+                };
+
+                g2d.setPaint(Color.BLACK);
+                g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
+                g2d.setPaint(Color.GREEN);
+                g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
+            } else { //Start and end states are the same.
+                int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
+
+                g2d.drawOval(x - (int) (State.RAD * 1.5), y - 4 * State.RAD, State.RAD * 3, State.RAD * 4);
             }
-
-            int fuzzingAmount = 1;
-            int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
-            int xOffSet, yOffSet;
-
-            int stateDeltaX = x - xf;
-            int stateDeltaY = yf - y;
-
-            double angleStartToTransition;
-
-            if (stateDeltaX != 0) { //The tangent of the angle between the start state and the transition is defined.
-                //Ternary operators are good for readability.
-                angleStartToTransition = (end.c >= start.c) ? Math.atan(stateDeltaY / stateDeltaX) : (Math.PI + Math.atan(stateDeltaY / stateDeltaX));
-                xOffSet = ((int) (State.RAD * Math.cos(angleStartToTransition))) + (Math.cos(angleStartToTransition) >= 0 ? fuzzingAmount : -fuzzingAmount);
-                //Nested ternary operators are even better.
-                yOffSet = (stateDeltaY != 0) ? (((int) (State.RAD * Math.sin(angleStartToTransition))) + ((Math.sin(angleStartToTransition) >= 0) ? fuzzingAmount : -fuzzingAmount)) : 0;
-            } else { //Start and end states are in same column but different rows.
-                angleStartToTransition = end.r <= start.r ? -Math.PI / 2 : Math.PI / 2;
-                xOffSet = 0;
-                yOffSet = State.RAD + fuzzingAmount;
-            }
-
-            double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
-            int[] arrowXCoordinates = {
-                    (int) (xf - xOffSet * 0.9), //0.9 moves the arrow tip closer into the state
-                    (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI / 4)),
-                    // PI/4 changes width of the arrow
-                    (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI / 4))
-            };
-
-            int[] arrowYCoordinates = {
-                    (int) (yf + yOffSet * 0.9),
-                    (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition - Math.PI / 4)),
-                    (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
-            };
-
-            g2d.setPaint(Color.BLACK);
-            g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
-            g2d.setPaint(Color.GREEN);
-            g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
 
             //TODO fix arrows, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
         }
@@ -303,7 +309,7 @@ public class DFA {
     }
 
     public void handleDrag(int x, int y, int xf, int yf) {
-        if (onState(xf, yf) && onStateSpace(x, y) && onStateSpace(xf, yf) && (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
+        if (onState(xf, yf) && onStateSpace(x, y) && onStateSpace(xf, yf) ) { //&& (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
             //dialog
             Object[] opts = {"0", "1", "0 or 1"};
             Alphabet transitionSymbol;
