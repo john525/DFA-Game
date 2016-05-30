@@ -307,7 +307,7 @@ public class DFA {
         }
     }
 
-    public String transitionPrompt() {
+    public String displayTransitionPrompt() {
         Object[] opts = {"0", "1", "0 or 1"};
 
         String s = (String) JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
@@ -322,7 +322,7 @@ public class DFA {
 
     public void handleDrag(int x, int y, int xf, int yf) {
         if (onState(xf, yf) && onStateSpace(x, y) && onStateSpace(xf, yf) && (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
-            String s = transitionPrompt();
+            String s = displayTransitionPrompt();
 
             addTransition(nearestGridSpace(x, y), nearestGridSpace(xf, yf), s);
         }
@@ -330,7 +330,7 @@ public class DFA {
 
     public void handleDoubleClick(int x, int y) {
         if (onState(x, y) && onStateSpace(x, y)) {
-            String s = transitionPrompt();
+            String s = displayTransitionPrompt();
 
             addTransition(nearestGridSpace(x, y), nearestGridSpace(x, y), s);
         }
