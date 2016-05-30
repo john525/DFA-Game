@@ -196,7 +196,7 @@ public class DFA {
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
 
                 g2d.setPaint(Color.BLACK);
-                g2d.drawOval(x - (int) (State.RAD * 1), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
+                g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
             }
 
             //TODO fix arrows, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
@@ -241,11 +241,11 @@ public class DFA {
         states.remove(loc);
     }
 
-    public void addTransition(Coord loc, Coord locf, String str, Alphabet symbol) {
+    public void addTransition(Coord loc, Coord locf, String str) {
         State q1 = states.get(loc);
         State q2 = states.get(locf);
         if (q1 == null || q2 == null) return;
-        Transition t = new Transition(q1, q2, str, symbol);
+        Transition t = new Transition(q1, q2, str);
         transitions.add(t);
         transitionFunction.AddRule(t);
     }
@@ -256,13 +256,11 @@ public class DFA {
      *
      * @param x_int Integer x coordinate
      * @param y_int Integer y coordinate.
-     * @return
+     * @return A coordinate object representing the grid space nearest a set of coordinates,
      */
     public Coord nearestGridSpace(int x_int, int y_int) {
-        double x = x_int;
-        double y = y_int;
-        int r = (int) Math.round(y / Game.BOX_DIM);
-        int c = (int) Math.round(x / Game.BOX_DIM);
+        int r = (int) Math.round((double) y_int / Game.BOX_DIM);
+        int c = (int) Math.round((double) x_int / Game.BOX_DIM);
         return new Coord(r, c);
     }
 
@@ -309,56 +307,32 @@ public class DFA {
         }
     }
 
+    public String transitionPrompt() {
+        Object[] opts = {"0", "1", "0 or 1"};
+
+        String s = (String) JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
+                "Specify transition character", JOptionPane.PLAIN_MESSAGE, null, opts, "0");
+
+        if (s.equals("0 or 1")) {
+            s = "01";
+        }
+
+        return s;
+    }
+
     public void handleDrag(int x, int y, int xf, int yf) {
         if (onState(xf, yf) && onStateSpace(x, y) && onStateSpace(xf, yf) && (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
-            //dialog
-            Object[] opts = {"0", "1", "0 or 1"};
-            Alphabet transitionSymbol;
+            String s = transitionPrompt();
 
-            String s = (String) JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
-                    "Specify transition character", JOptionPane.PLAIN_MESSAGE, null, opts, "0");
-
-            if (s.equals("0 or 1")) {
-                s = "01";
-            }
-
-            if (s.equalsIgnoreCase("0")) {
-                transitionSymbol = Alphabet.ZERO;
-            } else if (s.equalsIgnoreCase("1")) {
-                transitionSymbol = Alphabet.ONE;
-            } else if (s.equalsIgnoreCase("01")) {
-                transitionSymbol = Alphabet.ZEROandONE;
-            } else {
-                transitionSymbol = Alphabet.EPSILON;
-            }
-
-            addTransition(nearestGridSpace(x, y), nearestGridSpace(xf, yf), s, transitionSymbol);
+            addTransition(nearestGridSpace(x, y), nearestGridSpace(xf, yf), s);
         }
     }
 
     public void handleDoubleClick(int x, int y) {
         if (onState(x, y) && onStateSpace(x, y)) {
-            Object[] opts = {"0", "1", "0 or 1"};
-            Alphabet transitionSymbol;
+            String s = transitionPrompt();
 
-            String s = (String) JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
-                    "Specify transition character", JOptionPane.PLAIN_MESSAGE, null, opts, "0");
-
-            if (s.equals("0 or 1")) {
-                s = "01";
-            }
-
-            if (s.equalsIgnoreCase("0")) {
-                transitionSymbol = Alphabet.ZERO;
-            } else if (s.equalsIgnoreCase("1")) {
-                transitionSymbol = Alphabet.ONE;
-            } else if (s.equalsIgnoreCase("01")) {
-                transitionSymbol = Alphabet.ZEROandONE;
-            } else {
-                transitionSymbol = Alphabet.EPSILON;
-            }
-
-            addTransition(nearestGridSpace(x, y), nearestGridSpace(x, y), s, transitionSymbol);
+            addTransition(nearestGridSpace(x, y), nearestGridSpace(x, y), s);
         }
     }
 
