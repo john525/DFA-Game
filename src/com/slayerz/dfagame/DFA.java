@@ -195,7 +195,8 @@ public class DFA {
             } else { //Start and end states are the same.
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
 
-                g2d.drawOval(x - (int) (State.RAD * 1.5), y - 4 * State.RAD, State.RAD * 3, State.RAD * 4);
+                g2d.setPaint(Color.BLACK);
+                g2d.drawOval(x - (int) (State.RAD * 1), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
             }
 
             //TODO fix arrows, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
@@ -309,7 +310,7 @@ public class DFA {
     }
 
     public void handleDrag(int x, int y, int xf, int yf) {
-        if (onState(xf, yf) && onStateSpace(x, y) && onStateSpace(xf, yf) ) { //&& (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
+        if (onState(xf, yf) && onStateSpace(x, y) && onStateSpace(xf, yf) && (!nearestGridSpace(x, y).equals(nearestGridSpace(xf, yf)))) {
             //dialog
             Object[] opts = {"0", "1", "0 or 1"};
             Alphabet transitionSymbol;
@@ -335,9 +336,36 @@ public class DFA {
         }
     }
 
+    public void handleDoubleClick(int x, int y) {
+        if (onState(x, y) && onStateSpace(x, y)) {
+            Object[] opts = {"0", "1", "0 or 1"};
+            Alphabet transitionSymbol;
+
+            String s = (String) JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
+                    "Specify transition character", JOptionPane.PLAIN_MESSAGE, null, opts, "0");
+
+            if (s.equals("0 or 1")) {
+                s = "01";
+            }
+
+            if (s.equalsIgnoreCase("0")) {
+                transitionSymbol = Alphabet.ZERO;
+            } else if (s.equalsIgnoreCase("1")) {
+                transitionSymbol = Alphabet.ONE;
+            } else if (s.equalsIgnoreCase("01")) {
+                transitionSymbol = Alphabet.ZEROandONE;
+            } else {
+                transitionSymbol = Alphabet.EPSILON;
+            }
+
+            addTransition(nearestGridSpace(x, y), nearestGridSpace(x, y), s, transitionSymbol);
+        }
+    }
+
     public void handleShiftDrag(int x, int y, int xf, int yf) {
 
     }
+
 
     private class Coord {
         private int r;

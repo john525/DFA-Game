@@ -18,7 +18,6 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
@@ -136,7 +135,9 @@ public class Game {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (alt) {
+            if (e.getClickCount() == 2) {
+                dfa.handleDoubleClick(e.getX(), e.getY());
+            } else if (alt) {
                 dfa.handleAltClick(e.getX(), e.getY());
             } else if (ctrl) {
                 dfa.handleCtrlClick(e.getX(), e.getY());
