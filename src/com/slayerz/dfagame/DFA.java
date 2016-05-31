@@ -55,7 +55,8 @@ public class DFA {
 
     /**
      * Determines if the DFA is valid. A valid DFA has ONE legitimate transition leaving every state for '0' and '1'
-     * @return True if the DFA is valid, false otherwise.
+     *
+     * @return True if the DFA is valid (as defined), false otherwise.
      */
     public boolean isDFAComplete() {
         for (State s : states.values()) {
@@ -203,19 +204,21 @@ public class DFA {
                 };
 
                 int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
+                g2d.setPaint(Color.BLACK);
                 g2d.drawString(t.getChars(), (x + xf) / 2 - xLabelOffset, (y + yf) / 2 - (int) (State.RAD / 2));
 
                 g2d.setPaint(Color.BLACK);
                 g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
+
                 g2d.setPaint(Color.GREEN);
                 g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
             } else { //Start and end states are the same.
+                g2d.setPaint(Color.BLACK);
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
 
                 int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
                 g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4.5 * State.RAD));
 
-                g2d.setPaint(Color.BLACK);
                 g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
             }
 
