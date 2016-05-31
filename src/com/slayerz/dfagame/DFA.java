@@ -54,6 +54,20 @@ public class DFA {
     }
 
     /**
+     * Determines if the DFA is valid. A valid DFA has ONE legitimate transition leaving every state for '0' and '1'
+     * @return True if the DFA is valid, false otherwise.
+     */
+    public boolean isDFAComplete() {
+        for (State s : states.values()) {
+            if (transitionFunction.GetNextState(s, '0') == null || transitionFunction.GetNextState(s, '1') == null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Determine whether the DFA accepts the strings it should.
      *
      * @param regex The regex to check strings against.
@@ -188,8 +202,7 @@ public class DFA {
                         (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
                 };
 
-                int xLabelOffset = t.getChars().equals("01") ? 7 : 3;
-
+                int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
                 g2d.drawString(t.getChars(), (x + xf) / 2 - xLabelOffset, (y + yf) / 2 - (int) (State.RAD / 2));
 
                 g2d.setPaint(Color.BLACK);
@@ -199,7 +212,7 @@ public class DFA {
             } else { //Start and end states are the same.
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
 
-                int xLabelOffset = t.getChars().equals("01") ? 7 : 3;
+                int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
                 g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4.5 * State.RAD));
 
                 g2d.setPaint(Color.BLACK);
