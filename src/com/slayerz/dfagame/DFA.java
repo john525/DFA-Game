@@ -188,12 +188,19 @@ public class DFA {
                         (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
                 };
 
+                int xLabelOffset = t.getChars().equals("01") ? 7 : 3;
+
+                g2d.drawString(t.getChars(), (x + xf) / 2 - xLabelOffset, (y + yf) / 2 - (int) (State.RAD / 2));
+
                 g2d.setPaint(Color.BLACK);
                 g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
                 g2d.setPaint(Color.GREEN);
                 g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
             } else { //Start and end states are the same.
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
+
+                int xLabelOffset = t.getChars().equals("01") ? 7 : 3;
+                g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4.5 * State.RAD));
 
                 g2d.setPaint(Color.BLACK);
                 g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
