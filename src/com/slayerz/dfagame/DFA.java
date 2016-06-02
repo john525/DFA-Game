@@ -58,7 +58,7 @@ public class DFA {
      *
      * @return True if the DFA is valid (as defined), false otherwise.
      */
-    public boolean isDFAComplete() {
+    public boolean isValid() {
         for (State s : states.values()) {
             if (transitionFunction.GetNextState(s, '0') == null || transitionFunction.GetNextState(s, '1') == null) {
                 return false;
