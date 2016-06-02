@@ -162,13 +162,13 @@ public class DFA {
             Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
 
             if (!start.equals(end)) { //Start and end states are different.
-                if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
+                /*if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
                     Coord temp = new Coord(start.r, start.c);
                     start = end;
                     end = temp;
-                }
+                }*/
 
-                int fuzzingAmount = 1;
+                int fuzzingAmount = 0;
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
                 int xOffSet, yOffSet;
 
@@ -189,7 +189,20 @@ public class DFA {
                     yOffSet = State.RAD + fuzzingAmount;
                 }
 
+                int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
+                g2d.setPaint(Color.BLACK);
+                
+                if( x == xf ){ // Does label position right when transition is vertical
+                	g2d.drawString(t.getChars(), (x + xf) / 2 + 10, (y + yf) / 2 - (int) (State.RAD / 2));
+                } else { 
+                	g2d.drawString(t.getChars(), (x + xf) / 2 - xLabelOffset, (y + yf) / 2 - (int) (State.RAD / 2));
+                }
+
+                g2d.setPaint(Color.BLACK);
+                g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
+                
                 double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
+                
                 int[] arrowXCoordinates = {
                         (int) (xf - xOffSet * 0.9), //0.9 moves the arrow tip closer into the state
                         (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI / 4)),
@@ -197,21 +210,23 @@ public class DFA {
                         (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI / 4))
                 };
 
-                int[] arrowYCoordinates = {
+                int[] arrowYCoordinatesStandard = {
                         (int) (yf + yOffSet * 0.9),
                         (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition - Math.PI / 4)),
                         (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
                 };
-
-                int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
-                g2d.setPaint(Color.BLACK);
-                g2d.drawString(t.getChars(), (x + xf) / 2 - xLabelOffset, (y + yf) / 2 - (int) (State.RAD / 2));
-
-                g2d.setPaint(Color.BLACK);
-                g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
+                
+                int[] arrowYCoordinatesAlt = {
+                        (int) (yf - yOffSet * 0.9),
+                        (int) (yf - yOffSet + arrowSide * Math.sin(-angleStartToTransition - Math.PI / 4)),
+                        (int) (yf - yOffSet + arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
+                };
+                
+                int[] arrowYCoordinates = ( x == xf) ? arrowYCoordinatesAlt : arrowYCoordinatesStandard;
 
                 g2d.setPaint(Color.GREEN);
                 g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
+                
             } else { //Start and end states are the same.
                 g2d.setPaint(Color.BLACK);
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
