@@ -15,11 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.Timer;
+import javax.swing.*;
 
 public class Game {
 
@@ -27,8 +23,10 @@ public class Game {
     private GamePanel gamePanel;
     private JLabel text;
     private Timer timer;
+    private JButton testButton;
 
     private DFA dfa;
+    private String regex;
 
     //user input stuff
     private boolean alt, shift, ctrl;
@@ -70,6 +68,10 @@ public class Game {
         gamePanel.addMouseMotionListener(s);
         gamePanel.addKeyListener(s);
 
+        testButton = new JButton("Click here to test your DFA!");
+        testButton.addActionListener(new GameStatusChecker());
+        frame.add(testButton, BorderLayout.PAGE_END);
+
         frame.add(gamePanel, BorderLayout.CENTER);
 
         text = new JLabel("regex here");
@@ -82,7 +84,6 @@ public class Game {
         frame.setVisible(true);
 
         timer = new Timer(1000 / 30, new Animator());
-        timer.addActionListener(new GameStatusChecker());
         timer.setInitialDelay(0);
         timer.start();
     }
@@ -90,12 +91,14 @@ public class Game {
     private class GameStatusChecker implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            isDone();
+            if(dfa.isValid()) {
+                if (dfa.MatchesRegex(regex)) {
+                    text.setText("Congratulations!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(gamePanel, "Your DFA is invalid.");
+            }
         }
-    }
-
-    private boolean isDone() {
-        return false;
     }
 
     private class Animator implements ActionListener {
