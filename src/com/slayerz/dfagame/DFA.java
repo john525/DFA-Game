@@ -121,7 +121,7 @@ public class DFA {
     }
 
     /**
-     * Generates all string representations of bianry numbers up to a certain length.
+     * Generates all string representations of binary numbers up to a certain length.
      *
      * @param length The maximum length of binary string to produced.
      * @return List of all binary strings of length up to and including length in ascending value order.
@@ -161,7 +161,7 @@ public class DFA {
         for (Transition t : transitions) {
             Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
 
-            if (!start.equals(end)) { //Start and end states are different.
+            if (!start.equals(end) && !willOverlap(start, end)) { //Start and end states are different and don't overlap
                 /*if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
                     Coord temp = new Coord(start.r, start.c);
                     start = end;
@@ -192,7 +192,7 @@ public class DFA {
                 int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
                 g2d.setPaint(Color.BLACK);
                 
-                if( x == xf ){ // Does label position right when transition is vertical
+                if( x == xf ){ // Does label position right when transition is vertical ri
                 	g2d.drawString(t.getChars(), (x + xf) / 2 + 10, (y + yf) / 2 - (int) (State.RAD / 2));
                 } else { 
                 	g2d.drawString(t.getChars(), (x + xf) / 2 - xLabelOffset, (y + yf) / 2 - (int) (State.RAD / 2));
@@ -227,7 +227,16 @@ public class DFA {
                 g2d.setPaint(Color.GREEN);
                 g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
                 
-            } else { //Start and end states are the same.
+            } else if(!start.equals(end) && willOverlap(start, end)) { 
+            	
+            	System.out.println("Hello");
+            	
+            	g2d.setPaint(Color.BLACK);
+            	double x = start.c < end.c ? start.c : end.c;
+            	double y = start.r > end.r ? end.r - 0.5 : start.r - 0.5;
+            	
+        	} else { //Start and end states are the same.
+        		
                 g2d.setPaint(Color.BLACK);
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
 
@@ -236,9 +245,18 @@ public class DFA {
 
                 g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
             }
-
-            //TODO fix arrows, curve transition arrows so that they don't overlap if they go between the same states in opposite directions
+            //TODO curve transition arrows so that they don't overlap if they go between the same states in opposite directions
         }
+    }
+    
+    private boolean willOverlap(Coord loc, Coord locf){
+    	for(Transition t: transitions){
+    		if( (states.get(loc) == t.getStart() && states.get(locf) == t.getEnd()) || 
+    				(states.get(locf) == t.getStart() && states.get(loc)== t.getEnd()) ){
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     public void handleClick(double x, double y) {
@@ -282,12 +300,16 @@ public class DFA {
     public void addTransition(Coord loc, Coord locf, String str) {
         State q1 = states.get(loc);
         State q2 = states.get(locf);
+        //Check if transitions already exists
+        if (transitions.contains(new Transition(q1, q2, str)) || transitions.contains(new Transition(q1, q2, "01")) ){
+        	JOptionPane.showMessageDialog(null, "Transition Already Exists", "Error", JOptionPane.ERROR_MESSAGE);
+    		return; //TODO Fix this weird shit
+        }
         if (q1 == null || q2 == null) return;
         Transition t = new Transition(q1, q2, str);
         transitions.add(t);
         transitionFunction.AddRule(t);
     }
-
 
     /**
      * Finds the coordinates (in terms of rows and columns on the 5x5 grid) of the nearest grid space to the specified point.
@@ -377,7 +399,6 @@ public class DFA {
     public void handleShiftDrag(int x, int y, int xf, int yf) {
 
     }
-
 
     private class Coord {
         private int r;

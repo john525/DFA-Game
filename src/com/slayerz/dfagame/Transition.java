@@ -31,4 +31,13 @@ public class Transition {
     public boolean accepts(String l) {
         return chars.contains(l);
     }
+    
+    @Override
+    public boolean equals(Object o){
+    	if(o instanceof Transition){
+    		Transition t = (Transition) o;
+    		return start == t.getStart() && end == t.getEnd() && chars == t.getChars(); 
+    	}
+    	return false;
+    }
 }
