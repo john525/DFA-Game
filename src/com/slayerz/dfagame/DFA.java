@@ -231,9 +231,35 @@ public class DFA {
             	
             	System.out.println("Hello");
             	
+            	int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
+            	
             	g2d.setPaint(Color.BLACK);
-            	double x = start.c < end.c ? start.c : end.c;
-            	double y = start.r > end.r ? end.r - 0.5 : start.r - 0.5;
+            	g2d.drawArc(
+            			xf < xi ? xf : xi, 
+            			yf < yi ? yf : yi,
+            			xf < xi ? xi - xf : xf - xi,
+            			yf < yi ? yi - yf : yf - yi,
+            			(xf < xi) != (yf < yi) ? 0 : 90,
+            			(xf < xi) != (yf < yi) ? 90 : 180);
+            	if(xf < xi && yf < yi){
+            		g2d.drawArc(xf, yf, xf - xi , yf - yi , 0 , 90);
+            	} else if(xf < xi && yf > yi){
+            		g2d.drawArc(xf, yf, xi - xf , yf - yi , 90 , 180);
+            	} else if(xf > xi && yf < yi){
+            		
+            	} else if(xf > xi && yf > yi){
+            		
+            	} else if(xf == xi && yf < yi){
+            		
+            	} else if(xf == xi && yf > yi){
+            		
+            	} else if(xf < xi && yf == yi){
+            		
+            	} else if(xf > xi && yf == yi){
+            		
+            	} else {
+            		System.out.println("Error"); //Welp something went wrong
+            	}
             	
         	} else { //Start and end states are the same.
         		
