@@ -161,7 +161,7 @@ public class DFA {
         for (Transition t : transitions) {
             Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
 
-            if (!start.equals(end) && !willOverlap(start, end)) { //Start and end states are different and don't overlap
+            if (!start.equals(end) && willOverlap(start, end)) { //Start and end states are different and don't overlap
                 /*if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
                     Coord temp = new Coord(start.r, start.c);
                     start = end;
@@ -228,38 +228,17 @@ public class DFA {
                 g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
                 
             } else if(!start.equals(end) && willOverlap(start, end)) { 
-            	
-            	System.out.println("Hello");
-            	
+
             	int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
             	
             	g2d.setPaint(Color.BLACK);
             	g2d.drawArc(
-            			xf < xi ? xf : xi, 
-            			yf < yi ? yf : yi,
-            			xf < xi ? xi - xf : xf - xi,
-            			yf < yi ? yi - yf : yf - yi,
-            			(xf < xi) != (yf < yi) ? 0 : 90,
-            			(xf < xi) != (yf < yi) ? 90 : 180);
-            	if(xf < xi && yf < yi){
-            		g2d.drawArc(xf, yf, xf - xi , yf - yi , 0 , 90);
-            	} else if(xf < xi && yf > yi){
-            		g2d.drawArc(xf, yf, xi - xf , yf - yi , 90 , 180);
-            	} else if(xf > xi && yf < yi){
-            		
-            	} else if(xf > xi && yf > yi){
-            		
-            	} else if(xf == xi && yf < yi){
-            		
-            	} else if(xf == xi && yf > yi){
-            		
-            	} else if(xf < xi && yf == yi){
-            		
-            	} else if(xf > xi && yf == yi){
-            		
-            	} else {
-            		System.out.println("Error"); //Welp something went wrong
-            	}
+            			xf < xi ? xf : xi, //Top left x
+            			yf < yi ? yf : yi, //Top left y
+            			xf < xi ? xi - xf : xf - xi, //Width
+            			yf < yi ? yi - yf : yf - yi, //Height
+            			(xf < xi) != (yf < yi) ? 0 : 90, //Start Angle
+            			(xf < xi) != (yf < yi) ? 90 : 180); //End Angle
             	
         	} else { //Start and end states are the same.
         		
@@ -277,8 +256,8 @@ public class DFA {
     
     private boolean willOverlap(Coord loc, Coord locf){
     	for(Transition t: transitions){
-    		if( (states.get(loc) == t.getStart() && states.get(locf) == t.getEnd()) || 
-    				(states.get(locf) == t.getStart() && states.get(loc)== t.getEnd()) ){
+    		if( (states.get(loc).equals(t.getStart()) && states.get(locf).equals(t.getEnd())) || 
+    				(states.get(locf).equals(t.getStart()) && states.get(loc).equals(t.getEnd())) ){
     			return true;
     		}
     	}
