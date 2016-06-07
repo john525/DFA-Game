@@ -100,11 +100,10 @@ public class Game {
     private class GameStatusChecker implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(dfa.isValid()) {
+            if (dfa.isValid()) {
                 if (dfa.MatchesRegex(regex)) {
                     JOptionPane.showMessageDialog(gamePanel, "Congratulations!");
-                }
-                else {
+                } else {
                     JOptionPane.showMessageDialog(gamePanel, "Your DFA is properly constructed but incorrect.");
                 }
             } else {

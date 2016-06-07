@@ -60,10 +60,16 @@ public class Delta {
             this.symbol = symbol;
         }
 
-        public State getStart() { return start; }
+        public State getStart() {
+            return start;
+        }
 
-        public State getEnd() { return end; }
+        public State getEnd() {
+            return end;
+        }
 
-        public char getSymbol() { return symbol; }
+        public char getSymbol() {
+            return symbol;
+        }
     }
 }
