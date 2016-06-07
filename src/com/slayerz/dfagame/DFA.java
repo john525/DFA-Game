@@ -159,90 +159,37 @@ public class DFA {
 
         //Draw each transition.
         for (Transition t : transitions) {
-            Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
-
-            /*if (!start.equals(end) && willOverlap(start, end)) { //Start and end states are different and don't overlap
-                //if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
-                //    Coord temp = new Coord(start.r, start.c);
-                //    start = end;
-                //    end = temp;
-                //}
-
-                int fuzzingAmount = 0;
-                int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
-                int xOffSet, yOffSet;
-
-                int stateDeltaX = x - xf;
-                int stateDeltaY = yf - y;
-
-                double angleStartToTransition;
-
-                if (stateDeltaX != 0) { //The tangent of the angle between the start state and the transition is defined.
-                    //Ternary operators are good for readability.
-                    angleStartToTransition = (end.c >= start.c) ? Math.atan(stateDeltaY / stateDeltaX) : (Math.PI + Math.atan(stateDeltaY / stateDeltaX));
-                    xOffSet = ((int) (State.RAD * Math.cos(angleStartToTransition))) + (Math.cos(angleStartToTransition) >= 0 ? fuzzingAmount : -fuzzingAmount);
-                    //Nested ternary operators are even better.
-                    yOffSet = (stateDeltaY != 0) ? (((int) (State.RAD * Math.sin(angleStartToTransition))) + ((Math.sin(angleStartToTransition) >= 0) ? fuzzingAmount : -fuzzingAmount)) : 0;
-                } else { //Start and end states are in same column but different rows.
-                    angleStartToTransition = end.r <= start.r ? -Math.PI / 2 : Math.PI / 2;
-                    xOffSet = 0;
-                    yOffSet = State.RAD + fuzzingAmount;
-                }
-
-                int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
-                g2d.setPaint(Color.BLACK);
-                
-                if( x == xf ){ // Does label position right when transition is vertical ri
-                	g2d.drawString(t.getChars(), (x + xf) / 2 + 10, (y + yf) / 2 - (int) (State.RAD / 2));
-                } else { 
-                	g2d.drawString(t.getChars(), (x + xf) / 2 - xLabelOffset, (y + yf) / 2 - (int) (State.RAD / 2));
-                }
-
-                g2d.setPaint(Color.BLACK);
-                g2d.drawLine(x + xOffSet, y - yOffSet, xf - xOffSet, yf + yOffSet);
-                
-                double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
-                
-                int[] arrowXCoordinates = {
-                        (int) (xf - xOffSet * 0.9), //0.9 moves the arrow tip closer into the state
-                        (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition - Math.PI / 4)),
-                        // PI/4 changes width of the arrow
-                        (int) (xf - xOffSet - arrowSide * Math.cos(-angleStartToTransition + Math.PI / 4))
-                };
-
-                int[] arrowYCoordinatesStandard = {
-                        (int) (yf + yOffSet * 0.9),
-                        (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition - Math.PI / 4)),
-                        (int) (yf + yOffSet - arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
-                };
-                
-                int[] arrowYCoordinatesAlt = {
-                        (int) (yf - yOffSet * 0.9),
-                        (int) (yf - yOffSet + arrowSide * Math.sin(-angleStartToTransition - Math.PI / 4)),
-                        (int) (yf - yOffSet + arrowSide * Math.sin(-angleStartToTransition + Math.PI / 4))
-                };
-                
-                int[] arrowYCoordinates = ( x == xf) ? arrowYCoordinatesAlt : arrowYCoordinatesStandard;
-
-                g2d.setPaint(Color.GREEN);
-                g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
-                
-            } else */ 
+            
+        	Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
+            
             if(!start.equals(end)) { 
 
-            	final int bufferFactor = 25; //How far arrow rises above horizontal
+            	final int bufferFactor = 25; //How far arrow rises above horizontal/vertical
             	int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
             	
             	g2d.setPaint(Color.BLACK);
             	
             	if (yf < yi && xf != xi){
+            		
             		g2d.drawArc(xf < xi ? xf - Math.abs(xf-xi) : xi, yf, 2*Math.abs(xf-xi), 2*Math.abs(yf-yi), xf < xi ? 0 : 90, 90);
+            		g2d.drawString(t.getChars(), xf > xi ? (xf+xi)/2 - Math.abs(xf-xi)/8 : (xf+xi)/2 + Math.abs(xf-xi)/8, yf + Math.abs(yf-yi)/12);
+            		
             	} else if (yf > yi && xf != xi){
+            		
             		g2d.drawArc(xf < xi ? xf - Math.abs(xf-xi) : xi, yi - Math.abs(yf-yi), 2*Math.abs(xf-xi), 2*Math.abs(yf-yi), xf < xi ? 270 : 180, 90);
+            		g2d.drawString(t.getChars(), xf > xi ? (xf+xi)/2 - Math.abs(xf-xi)/8 : (xf+xi)/2 + Math.abs(xf-xi)/8, yf - Math.abs(yf-yi)/12);
+    
             	} else if (yf == yi && xf != xi) {
+            		
             		g2d.drawArc(xf < xi ? xf : xi, yi - bufferFactor, Math.abs(xf-xi), 2*bufferFactor, xf < xi ? 0 : 180, 180);
+            		g2d.drawString(t.getChars(), (xi+xf)/2, xi > xf ? yi - bufferFactor - 10 : yi + bufferFactor + 20);
+            		
             	} else /* (xf == xi) */ {
+            		
             		g2d.drawArc(xi - bufferFactor, yf < yi ? yf : yi, 2*bufferFactor, Math.abs(yf-yi), yf < yi ? 90 : 270, 180);
+            		g2d.drawString(t.getChars(), yi > yf ? xi - bufferFactor - 18 : xi + bufferFactor + 10, (yi+yf)/2 );
+            		//No one even knows why the pixel shift factor for different sides has to be different... -Douglas
+            		
             	}
             	
         	} else { //Start and end states are the same.
@@ -255,19 +202,8 @@ public class DFA {
 
                 g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
             }
-            //TODO curve transition arrows so that they don't overlap if they go between the same states in opposite directions
         }
     }
-    
-    /*private boolean willOverlap(Coord loc, Coord locf){
-    	for(Transition t: transitions){
-    		if( (states.get(loc).equals(t.getStart()) && states.get(locf).equals(t.getEnd())) || 
-    				(states.get(locf).equals(t.getStart()) && states.get(loc).equals(t.getEnd())) ){
-    			return true;
-    		}
-    	}
-    	return false;
-    }*/
 
     public void handleClick(double x, double y) {
         int r = (int) Math.round(y / Game.BOX_DIM);
