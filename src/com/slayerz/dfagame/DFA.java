@@ -182,7 +182,7 @@ public class DFA {
                 			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide), 
                 			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide)
             		};
-            		int[] arrowYCoordinates = { yf, yf + (int) arrowSide/2, yf - (int) arrowSide/2 };
+            		int[] arrowYCoordinates = { yf, yf + (int) arrowSide, yf - (int) arrowSide/2 };
             		g2d.setPaint(Color.ORANGE);
             		g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
             		
@@ -196,7 +196,7 @@ public class DFA {
             			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide), 
             			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide)
             		};
-            		int[] arrowYCoordinates = { yf, yf + (int) arrowSide/2, yf - (int) arrowSide/2 };
+            		int[] arrowYCoordinates = { yf, yf + (int) arrowSide/2, yf - (int) arrowSide };
             		g2d.setPaint(Color.ORANGE);
             		g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
     

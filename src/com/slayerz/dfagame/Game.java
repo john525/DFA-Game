@@ -80,9 +80,9 @@ public class Game {
 
         frame.add(gamePanel, BorderLayout.CENTER);
 
-        text = new JLabel("01");
+        text = new JLabel();
         text.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
-        text.setText("01");
+        text.setText("Regex: " + regex);
         text.setVerticalAlignment(SwingConstants.CENTER);
         text.setHorizontalAlignment(SwingConstants.CENTER);
 
