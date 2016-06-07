@@ -32,7 +32,7 @@ public class Game {
     private JButton testButton;
 
     private DFA dfa;
-    private String regex;
+    private String regex = "01";
 
     //user input stuff
     private boolean alt, shift, ctrl;
@@ -80,9 +80,9 @@ public class Game {
 
         frame.add(gamePanel, BorderLayout.CENTER);
 
-        text = new JLabel("regex here");
+        text = new JLabel("01");
         text.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
-        //text.setText("regex here");
+        text.setText("01");
         text.setVerticalAlignment(SwingConstants.CENTER);
         text.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -101,6 +101,7 @@ public class Game {
                 if (dfa.MatchesRegex(regex)) {
                     text.setText("Congratulations!");
                 }
+                JOptionPane.showMessageDialog(gamePanel, "Your DFA is properly constructed but incorrect");
             } else {
                 JOptionPane.showMessageDialog(gamePanel, "Your DFA is invalid.");
             }

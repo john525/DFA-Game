@@ -36,7 +36,7 @@ public class Transition {
     public boolean equals(Object o){
     	if(o instanceof Transition){
     		Transition t = (Transition) o;
-    		return start == t.getStart() && end == t.getEnd() && chars == t.getChars(); 
+    		return start == t.getStart() && end == t.getEnd() && chars.equals(t.getChars()); 
     	}
     	return false;
     }

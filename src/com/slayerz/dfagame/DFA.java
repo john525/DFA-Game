@@ -83,7 +83,6 @@ public class DFA {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -161,13 +160,13 @@ public class DFA {
         for (Transition t : transitions) {
             
         	Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
+        	
+        	final int bufferFactor = 25; //How far arrow rises above horizontal/vertical
+        	final double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
+        	final int radiusOffset = (int) (0.75 * State.RAD); //To cover up the transition arc correctly with the arrow
+        	final double recipSQRT2 = 0.71; 
             
             if(!start.equals(end)) { 
-
-            	final int bufferFactor = 25; //How far arrow rises above horizontal/vertical
-            	final double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
-            	final int radiusOffset = (int) (0.75 * State.RAD); //To cover up the transition arc correctly with the arrow
-            	final double recipSQRT2 = 0.71; 
 
             	int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
             	
@@ -247,9 +246,23 @@ public class DFA {
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
 
                 int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
-                g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4.5 * State.RAD));
+                g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4 * State.RAD));
 
-                g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD, State.RAD * 2, State.RAD * 3);
+                g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD + 5, State.RAD * 2, State.RAD * 3);
+                
+                int[] arrowXCoordinates = {
+                	(int) (x + 0.6 * radiusOffset),
+                	(int) (x + 0.6 * (radiusOffset - 0.6 * arrowSide)),
+                	(int) (x + 0.6 * (radiusOffset + 1.2 * arrowSide))
+                };
+                int[] arrowYCoordinates = {
+                	(int) (y - radiusOffset),
+                	(int) (y - radiusOffset - arrowSide),
+                	(int) (y - radiusOffset - 0.6 * arrowSide)
+                };
+                
+                g2d.setPaint(Color.ORANGE);
+                g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
             }
         }
     }
