@@ -96,11 +96,11 @@ public class DFA {
     public boolean acceptsString(String s) {
         State currentState = start;
         for (char c : s.toCharArray()) {
-    currentState = transitionFunction.GetNextState(currentState, c);
-}
-
-return currentState.isAccept();
+            currentState = transitionFunction.GetNextState(currentState, c);
         }
+
+        return currentState.isAccept();
+    }
 
     /**
      * Test all strings as long as the DFAs pumping length and tests them for acceptance by the DFA.
@@ -159,90 +159,90 @@ return currentState.isAccept();
 
         //Draw each transition.
         for (Transition t : transitions) {
-            
+
         	Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
-        	
+
         	final int bufferFactor = 25; //How far arrow rises above horizontal/vertical
         	final double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
         	final int radiusOffset = (int) (0.75 * State.RAD); //To cover up the transition arc correctly with the arrow
-        	final double recipSQRT2 = 0.71; 
-            
-            if(!start.equals(end)) { 
+        	final double recipSQRT2 = 0.71;
+
+            if(!start.equals(end)) {
 
             	int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
-            	
+
             	g2d.setPaint(Color.BLACK);
-            	
+
             	if (yf < yi && xf != xi){
-            		
+
             		g2d.drawArc(xf < xi ? xf - Math.abs(xf-xi) : xi, yf, 2*Math.abs(xf-xi), 2*Math.abs(yf-yi), xf < xi ? 0 : 90, 90);
             		g2d.drawString(t.getChars(), xf > xi ? (xf+xi)/2 - Math.abs(xf-xi)/8 : (xf+xi)/2 + Math.abs(xf-xi)/8, yf + Math.abs(yf-yi)/12);
-            		
+
             		int[] arrowXCoordinates = {
                 			(int) (xf > xi ? xf - radiusOffset : xf + radiusOffset ),
-                			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide), 
+                			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide),
                 			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide)
             		};
             		int[] arrowYCoordinates = { yf, yf + (int) arrowSide, yf - (int) arrowSide/2 };
             		g2d.setPaint(Color.ORANGE);
             		g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
-            		
+
             	} else if (yf > yi && xf != xi){
-            		
+
             		g2d.drawArc(xf < xi ? xf - Math.abs(xf-xi) : xi, yi - Math.abs(yf-yi), 2*Math.abs(xf-xi), 2*Math.abs(yf-yi), xf < xi ? 270 : 180, 90);
             		g2d.drawString(t.getChars(), xf > xi ? (xf+xi)/2 - Math.abs(xf-xi)/8 : (xf+xi)/2 + Math.abs(xf-xi)/8, yf - Math.abs(yf-yi)/12);
 
             		int[] arrowXCoordinates = {
             			(int) (xf > xi ? xf - radiusOffset : xf + radiusOffset ),
-            			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide), 
+            			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide),
             			(int) (xf > xi ? xf - radiusOffset - arrowSide : xf + radiusOffset + arrowSide)
             		};
             		int[] arrowYCoordinates = { yf, yf + (int) arrowSide/2, yf - (int) arrowSide };
             		g2d.setPaint(Color.ORANGE);
             		g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
-    
+
             	} else if (yf == yi && xf != xi) {
-            		
+
             		g2d.drawArc(xf < xi ? xf : xi, yi - bufferFactor, Math.abs(xf-xi), 2*bufferFactor, xf > xi ? 0 : 180, 180);
             		g2d.drawString(t.getChars(), (xi+xf)/2, xi < xf ? yi - bufferFactor - 10 : yi + bufferFactor + 20);
-            		
+
             		int[] arrowXCoordinates = {
                 			(int) (xf > xi ? xf - recipSQRT2 * radiusOffset : xf + recipSQRT2 * radiusOffset ),
-                			(int) (xf > xi ? xf - recipSQRT2 * (radiusOffset + arrowSide) : xf + recipSQRT2 * (radiusOffset + arrowSide)), 
+                			(int) (xf > xi ? xf - recipSQRT2 * (radiusOffset + arrowSide) : xf + recipSQRT2 * (radiusOffset + arrowSide)),
                 			(int) (xf > xi ? xf - recipSQRT2 * (radiusOffset + 2 * arrowSide) : xf + recipSQRT2 * (radiusOffset + 2 * arrowSide))
                 	};
             		int[] arrowYCoordinates = { 
             				(int) (xf > xi ? yf - recipSQRT2 * radiusOffset : yf + recipSQRT2 * radiusOffset ),
-            				(int) (xf > xi ? yf - recipSQRT2 * (radiusOffset + 1.5 * arrowSide) : yf + recipSQRT2 * (radiusOffset + 1.5 * arrowSide)), 
+            				(int) (xf > xi ? yf - recipSQRT2 * (radiusOffset + 1.5 * arrowSide) : yf + recipSQRT2 * (radiusOffset + 1.5 * arrowSide)),
                 			(int) (xf > xi ? yf - recipSQRT2 * (radiusOffset - arrowSide/4) : yf + recipSQRT2 * (radiusOffset - arrowSide/4))
                 	};
             		//Magic numbers experimentally determined
             		g2d.setPaint(Color.ORANGE);
             		g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
-            		
+
             	} else /* (xf == xi) */ {
-            		
+
             		g2d.drawArc(xi - bufferFactor, yf < yi ? yf : yi, 2*bufferFactor, Math.abs(yf-yi), yf < yi ? 90 : 270, 180);
             		g2d.drawString(t.getChars(), yi > yf ? xi - bufferFactor - 18 : xi + bufferFactor + 10, (yi+yf)/2 );
             		//No one even knows why the pixel shift factor for different sides has to be different... -Douglas
-            		
+
             		int[] arrowXCoordinates = {
                 			(int) (yf > yi ? xf + recipSQRT2 * radiusOffset : xf - recipSQRT2 * radiusOffset ),
-                			(int) (yf > yi ? xf + recipSQRT2 * (radiusOffset + 1.5 * arrowSide) : xf - recipSQRT2 * (radiusOffset + 1.5 * arrowSide)), 
+                			(int) (yf > yi ? xf + recipSQRT2 * (radiusOffset + 1.5 * arrowSide) : xf - recipSQRT2 * (radiusOffset + 1.5 * arrowSide)),
                 			(int) (yf > yi ? xf + recipSQRT2 * (radiusOffset - 0.7 * arrowSide) : xf - recipSQRT2 * (radiusOffset - 0.7 * arrowSide))
                 	};
-            		int[] arrowYCoordinates = { 
+            		int[] arrowYCoordinates = {
             				(int) (yf > yi ? yf - recipSQRT2 * radiusOffset : yf + recipSQRT2 * radiusOffset ),
-            				(int) (yf > yi ? yf - recipSQRT2 * (radiusOffset + 1.5 * arrowSide) : yf + recipSQRT2 * (radiusOffset + 1.5 * arrowSide)), 
+            				(int) (yf > yi ? yf - recipSQRT2 * (radiusOffset + 1.5 * arrowSide) : yf + recipSQRT2 * (radiusOffset + 1.5 * arrowSide)),
                 			(int) (yf > yi ? yf - recipSQRT2 * (radiusOffset + 2 * arrowSide) : yf + recipSQRT2 * (radiusOffset + 2 * arrowSide))
                 	};
             		//Magic numbers experimentally determined
             		g2d.setPaint(Color.ORANGE);
             		g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
             	}
-            	
+
         	} else { //Start and end states are the same.
-        		
+
                 g2d.setPaint(Color.BLACK);
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
 
@@ -250,7 +250,7 @@ return currentState.isAccept();
                 g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4 * State.RAD));
 
                 g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD + 5, State.RAD * 2, State.RAD * 3);
-                
+
                 int[] arrowXCoordinates = {
                 	(int) (x + 0.6 * radiusOffset),
                 	(int) (x + 0.6 * (radiusOffset - 0.6 * arrowSide)),
@@ -261,7 +261,7 @@ return currentState.isAccept();
                 	(int) (y - radiusOffset - arrowSide),
                 	(int) (y - radiusOffset - 0.6 * arrowSide)
                 };
-                
+
                 g2d.setPaint(Color.ORANGE);
                 g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
             }
