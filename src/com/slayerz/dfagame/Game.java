@@ -99,9 +99,11 @@ public class Game {
         public void actionPerformed(ActionEvent e) {
             if(dfa.isValid()) {
                 if (dfa.MatchesRegex(regex)) {
-                    text.setText("Congratulations!");
+                    JOptionPane.showMessageDialog(gamePanel, "Congratulations!");
                 }
-                JOptionPane.showMessageDialog(gamePanel, "Your DFA is properly constructed but incorrect");
+                else {
+                    JOptionPane.showMessageDialog(gamePanel, "Your DFA is properly constructed but incorrect.");
+                }
             } else {
                 JOptionPane.showMessageDialog(gamePanel, "Your DFA is invalid.");
             }
