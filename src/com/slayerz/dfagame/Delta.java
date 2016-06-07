@@ -38,6 +38,14 @@ public class Delta {
         }
     }
 
+    /**
+     * Given a state and a symbol within the alphabet of the DFA, returns the next state you'd navigate to.
+     * delta(q, symbol in alphabet)
+     *
+     * @param currentState The state input of the described function.
+     * @param symbol The symbol input of the described function.
+     * @return The output of the described function.
+     */
     public State GetNextState(State currentState, char symbol) {
         for (Rule r : transitionRules) {
             if (r.getStart().equals(currentState) && r.getSymbol() == symbol) {

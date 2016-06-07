@@ -137,6 +137,13 @@ public class DFA {
         return allBinaryNums;
     }
 
+    /**
+     * Generates all string representations of binary numbers.
+     * All the strings are a certain length so shorter numbers are zero padded.
+     *
+     * @param n The length of each string.
+     * @return List of strings.
+     */
     public List<String> getPartialStrings(int n) {
         List<String> partialStrings = new ArrayList<>();
 
@@ -151,6 +158,12 @@ public class DFA {
         return partialStrings;
     }
 
+    /**
+     * Given a state returns the Coordinate where that state is located.
+     *
+     * @param q The state in question.
+     * @return The coord representing the onscreen location of the state.
+     */
     public Coord locateState(State q) {
         for (Coord c : states.keySet()) {
             if (q == states.get(c)) {
@@ -160,6 +173,11 @@ public class DFA {
         return null;
     }
 
+    /**
+     * Handles drawing off all states and transitions.
+     *
+     * @param g2d The graphics object which handles all the relevant work.
+     */
     public void draw(Graphics2D g2d) {
         //Draw arrow to start state;
         g2d.setPaint(Color.GREEN);
@@ -377,6 +395,12 @@ public class DFA {
         return onStateSpace(x, y) && (states.get(loc) != null);
     }
 
+    /**
+     * Removes a state.
+     *
+     * @param x The x value of the onscreen location of the state to be removed.
+     * @param y The y value of the onscreen location of the state to be removed.
+     */
     public void handleCtrlClick(int x, int y) {
         if (onState(x, y)) {
             Coord loc = nearestGridSpace(x, y);
@@ -384,6 +408,12 @@ public class DFA {
         }
     }
 
+    /**
+     * Toggles a state's accept status.
+     *
+     * @param x The x value of the onscreen location of the state in question.
+     * @param y The y value of the onscreen location of the state in question.
+     */
     public void handleAltClick(int x, int y) {
         if (onState(x, y)) {
             states.get(nearestGridSpace(x, y)).toggleAccept();
@@ -411,6 +441,12 @@ public class DFA {
         }
     }
 
+    /**
+     * Creates a transition from a state to itself.
+     *
+     * @param x The x value of the onsreen location of the state to receive such a transition.
+     * @param y The y value of the onsreen location of the state to receive such a transition.
+     */
     public void handleDoubleClick(int x, int y) {
         if (onState(x, y) && onStateSpace(x, y)) {
             String s = displayTransitionPrompt();
@@ -423,6 +459,10 @@ public class DFA {
 
     }
 
+
+    /**
+     * Represetns a location in terms of row and column on our game grid.
+     */
     private class Coord {
         private int r;
         private int c;

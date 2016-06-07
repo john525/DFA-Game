@@ -1,3 +1,11 @@
+/**
+ * @author John Lhota, Thomas Reber, Douglas Wong
+ * <p>
+ * Represents and contains all information pertaining to the running of the Game.
+ * Handles creation of view model and timer.
+ * Makes appropriate calls to DFA functions.
+ */
+
 package com.slayerz.dfagame;
 
 import java.awt.BasicStroke;
@@ -31,7 +39,14 @@ public class Game {
     private Timer timer;
     private JButton testButton;
 
+    /**
+     * The dfa model upon which the game is being played.
+     */
     private DFA dfa;
+
+    /**
+     * The regex for the player to build a DFA to accept.
+     */
     private String regex = "01";
 
     //user input stuff
@@ -40,13 +55,21 @@ public class Game {
     private int currentX, currentY;
     private boolean drawingTransition;
 
-    public static final int DIM = 800, LINES = 5;
+    public static final int DIM = 800, LINES = 5; //Size of play area (DFA creation space)
     public static final int BOX_DIM = (int) (((double) DIM) / ((double) (LINES)));
 
+    /**
+     * Entry poiunt. Creates and runs a new game.
+     * @param args
+     */
     public static void main(String[] args) {
         new Game().go();
     }
 
+    /**
+     * Creates a new game and initalizes all field values to appropriate values.
+     * Creates a new DFA.
+     */
     public Game() {
         alt = shift = ctrl = false;
         startX = startY = -10;
@@ -56,6 +79,9 @@ public class Game {
         dfa = new DFA();
     }
 
+    /**
+     * Sets up all the graphics stuff (creates frame and view and event listeners)
+     */
     public void go() {
         frame = new JFrame("Slayyy");
         frame.setSize(DIM, DIM + 150);
@@ -97,6 +123,9 @@ public class Game {
         timer.start();
     }
 
+    /**
+     * Listens to "TEST YOUR DFA" button.
+     */
     private class GameStatusChecker implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -112,6 +141,9 @@ public class Game {
         }
     }
 
+    /**
+     * Redraws the screen every 1000/30 milliseconds. Triggered by Timer.
+     */
     private class Animator implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -119,6 +151,11 @@ public class Game {
         }
     }
 
+    /**
+     * The parent GamePanel.
+     * Background lines are drawn to this.
+     * Handles drawing lines as you draw transition.
+     */
     private class GamePanel extends JPanel {
         @Override
         public void paintComponent(Graphics g) {
@@ -141,6 +178,10 @@ public class Game {
         }
     }
 
+    /**
+     * Listens for mouse events and key events.
+     * Makes appropriate calls to DFA.
+     */
     private class StateInputListener implements MouseListener, MouseMotionListener, KeyListener {
 
         public StateInputListener() {
