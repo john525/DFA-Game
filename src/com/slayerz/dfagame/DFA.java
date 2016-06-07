@@ -161,12 +161,12 @@ public class DFA {
         for (Transition t : transitions) {
             Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
 
-            if (!start.equals(end) && willOverlap(start, end)) { //Start and end states are different and don't overlap
-                /*if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
-                    Coord temp = new Coord(start.r, start.c);
-                    start = end;
-                    end = temp;
-                }*/
+            /*if (!start.equals(end) && willOverlap(start, end)) { //Start and end states are different and don't overlap
+                //if (start.r < end.r && start.c == end.c) { //Kludgy way of accounting for Math.atan returning from -PI/2 to PI/2
+                //    Coord temp = new Coord(start.r, start.c);
+                //    start = end;
+                //    end = temp;
+                //}
 
                 int fuzzingAmount = 0;
                 int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
@@ -227,18 +227,23 @@ public class DFA {
                 g2d.setPaint(Color.GREEN);
                 g2d.fillPolygon(arrowXCoordinates, arrowYCoordinates, 3);
                 
-            } else if(!start.equals(end) && willOverlap(start, end)) { 
+            } else */ 
+            if(!start.equals(end)) { 
 
+            	final int bufferFactor = 25; //How far arrow rises above horizontal
             	int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
             	
             	g2d.setPaint(Color.BLACK);
-            	g2d.drawArc(
-            			xf < xi ? xf : xi, //Top left x
-            			yf < yi ? yf : yi, //Top left y
-            			xf < xi ? xi - xf : xf - xi, //Width
-            			yf < yi ? yi - yf : yf - yi, //Height
-            			(xf < xi) != (yf < yi) ? 0 : 90, //Start Angle
-            			(xf < xi) != (yf < yi) ? 90 : 180); //End Angle
+            	
+            	if (yf < yi && xf != xi){
+            		g2d.drawArc(xf < xi ? xf - Math.abs(xf-xi) : xi, yf, 2*Math.abs(xf-xi), 2*Math.abs(yf-yi), xf < xi ? 0 : 90, 90);
+            	} else if (yf > yi && xf != xi){
+            		g2d.drawArc(xf < xi ? xf - Math.abs(xf-xi) : xi, yi - Math.abs(yf-yi), 2*Math.abs(xf-xi), 2*Math.abs(yf-yi), xf < xi ? 270 : 180, 90);
+            	} else if (yf == yi && xf != xi) {
+            		g2d.drawArc(xf < xi ? xf : xi, yi - bufferFactor, Math.abs(xf-xi), 2*bufferFactor, xf < xi ? 0 : 180, 180);
+            	} else /* (xf == xi) */ {
+            		g2d.drawArc(xi - bufferFactor, yf < yi ? yf : yi, 2*bufferFactor, Math.abs(yf-yi), yf < yi ? 90 : 270, 180);
+            	}
             	
         	} else { //Start and end states are the same.
         		
@@ -254,7 +259,7 @@ public class DFA {
         }
     }
     
-    private boolean willOverlap(Coord loc, Coord locf){
+    /*private boolean willOverlap(Coord loc, Coord locf){
     	for(Transition t: transitions){
     		if( (states.get(loc).equals(t.getStart()) && states.get(locf).equals(t.getEnd())) || 
     				(states.get(locf).equals(t.getStart()) && states.get(loc).equals(t.getEnd())) ){
@@ -262,7 +267,7 @@ public class DFA {
     		}
     	}
     	return false;
-    }
+    }*/
 
     public void handleClick(double x, double y) {
         int r = (int) Math.round(y / Game.BOX_DIM);
