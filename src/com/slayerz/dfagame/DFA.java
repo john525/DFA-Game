@@ -80,6 +80,7 @@ public class DFA {
 
         for (String s : dfaResults.keySet()) {
             if (compiledRegex.matcher(s).matches() != dfaResults.get(s)) {
+//            if (Pattern.compile(regex).matcher(s).matches() != dfaResults.get(s)) {
                 return false;
             }
         }
@@ -95,11 +96,11 @@ public class DFA {
     public boolean acceptsString(String s) {
         State currentState = start;
         for (char c : s.toCharArray()) {
-            currentState = transitionFunction.GetNextState(currentState, c);
-        }
+    currentState = transitionFunction.GetNextState(currentState, c);
+}
 
-        return currentState.isAccept();
-    }
+return currentState.isAccept();
+        }
 
     /**
      * Test all strings as long as the DFAs pumping length and tests them for acceptance by the DFA.

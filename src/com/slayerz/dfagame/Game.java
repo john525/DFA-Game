@@ -74,9 +74,11 @@ public class Game {
         gamePanel.addMouseMotionListener(s);
         gamePanel.addKeyListener(s);
 
+        JPanel southPanel = new JPanel();
         testButton = new JButton("Click here to test your DFA!");
+        testButton.setFont(testButton.getFont().deriveFont(48));
         testButton.addActionListener(new GameStatusChecker());
-        frame.add(testButton, BorderLayout.PAGE_END);
+        southPanel.add(testButton);
 
         frame.add(gamePanel, BorderLayout.CENTER);
 
@@ -85,8 +87,9 @@ public class Game {
         text.setText("Regex: " + regex);
         text.setVerticalAlignment(SwingConstants.CENTER);
         text.setHorizontalAlignment(SwingConstants.CENTER);
+        southPanel.add(text);
 
-        frame.add(text, BorderLayout.SOUTH);
+        frame.add(southPanel, BorderLayout.SOUTH);
         frame.setVisible(true);
 
         timer = new Timer(1000 / 30, new Animator());
