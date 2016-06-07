@@ -109,7 +109,7 @@ public class DFA {
      */
     public Map<String, Boolean> testOnAll() {
         Map<String, Boolean> testResults = new HashMap<String, Boolean>();
-        int pumpingLength = states.size() + 1;
+        int pumpingLength = Math.max(2 * states.size() + 1, 13);
 
         List<String> binaryStrings = GenerateBinaryStrings(pumpingLength);
 
@@ -127,14 +127,28 @@ public class DFA {
      * @return List of all binary strings of length up to and including length in ascending value order.
      */
     public List<String> GenerateBinaryStrings(int length) {
-        List<String> binaryStrings = new ArrayList<String>();
-        long maximumValue = (long) (Math.pow(2, length) - 1);
-
-        for (int i = 0; i < maximumValue; i++) {
-            binaryStrings.add(Integer.toBinaryString(i));
+        List<String> allBinaryNums = new ArrayList<>();
+        for (int i = 1; i <= length; i++) {
+            for (String s : getPartialStrings(i)) {
+                allBinaryNums.add(s);
+            }
         }
 
-        return binaryStrings;
+        return allBinaryNums;
+    }
+
+    public List<String> getPartialStrings(int n) {
+        List<String> partialStrings = new ArrayList<>();
+
+        for (int i = 0; i < Math.pow(2, n); i++) {
+            String bin = Integer.toBinaryString(i);
+            while (bin.length() < n) {
+                bin = "0" + bin;
+            }
+            partialStrings.add(bin);
+        }
+
+        return partialStrings;
     }
 
     public Coord locateState(State q) {
@@ -211,7 +225,7 @@ public class DFA {
                 			(int) (xf > xi ? xf - recipSQRT2 * (radiusOffset + arrowSide) : xf + recipSQRT2 * (radiusOffset + arrowSide)),
                 			(int) (xf > xi ? xf - recipSQRT2 * (radiusOffset + 2 * arrowSide) : xf + recipSQRT2 * (radiusOffset + 2 * arrowSide))
                 	};
-            		int[] arrowYCoordinates = { 
+            		int[] arrowYCoordinates = {
             				(int) (xf > xi ? yf - recipSQRT2 * radiusOffset : yf + recipSQRT2 * radiusOffset ),
             				(int) (xf > xi ? yf - recipSQRT2 * (radiusOffset + 1.5 * arrowSide) : yf + recipSQRT2 * (radiusOffset + 1.5 * arrowSide)),
                 			(int) (xf > xi ? yf - recipSQRT2 * (radiusOffset - arrowSide/4) : yf + recipSQRT2 * (radiusOffset - arrowSide/4))
