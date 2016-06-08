@@ -127,7 +127,7 @@ public class DFA {
      * @return List of all binary strings of length up to and including length in ascending value order.
      */
     public List<String> GenerateBinaryStrings(int length) {
-        List<String> allBinaryNums = new ArrayList<>();
+        List<String> allBinaryNums = new ArrayList<String>();
         for (int i = 1; i <= length; i++) {
             for (String s : getPartialStrings(i)) {
                 allBinaryNums.add(s);
@@ -145,7 +145,7 @@ public class DFA {
      * @return List of strings.
      */
     public List<String> getPartialStrings(int n) {
-        List<String> partialStrings = new ArrayList<>();
+        List<String> partialStrings = new ArrayList<String>();
 
         for (int i = 0; i < Math.pow(2, n); i++) {
             String bin = Integer.toBinaryString(i);
@@ -458,15 +458,10 @@ public class DFA {
 
     }
 
-
-<<<<<<< Updated upstream
     /**
      * Represetns a location in terms of row and column on our game grid.
      */
     private class Coord {
-=======
-    private class Coord implements Comparable<Coord> {
->>>>>>> Stashed changes
         private int r;
         private int c;
 
@@ -501,15 +496,5 @@ public class DFA {
         public String toString() {
             return "(r=" + r + ",c=" + c + ")";
         }
-
-		@Override
-		public int compareTo(Coord o) {
-			if(this.equals(o)) return 0;
-			
-			if(r<o.getR() || (r==o.getR() && c<o.getC())) {
-				return 1;
-			}
-			else return -1;
-		}
     }
 }
