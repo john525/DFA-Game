@@ -128,6 +128,7 @@ public class DFA {
      */
     public List<String> GenerateBinaryStrings(int length) {
         List<String> allBinaryNums = new ArrayList<String>();
+        allBinaryNums.add("");
         for (int i = 1; i <= length; i++) {
             for (String s : getPartialStrings(i)) {
                 allBinaryNums.add(s);
