@@ -202,7 +202,6 @@ public class DFA {
             if (!start.equals(end)) {
 
                 int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
-
                 g2d.setPaint(Color.BLACK);
 
                 if (yf < yi && xf != xi) {
@@ -460,10 +459,14 @@ public class DFA {
     }
 
 
+<<<<<<< Updated upstream
     /**
      * Represetns a location in terms of row and column on our game grid.
      */
     private class Coord {
+=======
+    private class Coord implements Comparable<Coord> {
+>>>>>>> Stashed changes
         private int r;
         private int c;
 
@@ -498,5 +501,15 @@ public class DFA {
         public String toString() {
             return "(r=" + r + ",c=" + c + ")";
         }
+
+		@Override
+		public int compareTo(Coord o) {
+			if(this.equals(o)) return 0;
+			
+			if(r<o.getR() || (r==o.getR() && c<o.getC())) {
+				return 1;
+			}
+			else return -1;
+		}
     }
 }
