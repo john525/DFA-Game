@@ -35,18 +35,36 @@ public class DFA {
      * Transition function of the DFA.
      */
     private Delta transitionFunction;
+    
+    /**
+     * The width of the squares on the grid
+     */
+    public final int BOX_DIM;
+    
+    /** 
+     * The radius of a state
+     */
+    public final int STATE_RAD;
 
     /**
      * The radius around a state in which a click will be treated as corresponding to that state.
      */
-    public static final int CLICK_RAD = 3 * State.RAD;
+    public final int CLICK_RAD;
+
 
     /**
      * Create a new simple DFA.\
      * Places a start state in the upper left corner of the game board.
+     * 
+     * @param boxWidth The width of the (square) box on the grid being handled
      */
-    public DFA() {
-        start = new State(false);
+    public DFA(int boxDIM) {
+    	
+    	BOX_DIM = boxDIM;
+    	STATE_RAD = (int) (BOX_DIM / 8.0);
+    	CLICK_RAD = (int) (STATE_RAD * 3.0);
+    	
+        start = new State(false, BOX_DIM, STATE_RAD);
         transitionFunction = new Delta();
         states = new HashMap<Coord, State>();
         states.put(new Coord(1, 1), start);
@@ -183,7 +201,7 @@ public class DFA {
         //Draw arrow to start state;
         g2d.setPaint(Color.GREEN);
         g2d.setStroke(new BasicStroke(4));
-        g2d.drawLine(0, 0, Game.BOX_DIM, Game.BOX_DIM);
+        g2d.drawLine(0, 0, BOX_DIM, BOX_DIM);
 
         //Draw each state.
         for (Coord c : states.keySet()) {
@@ -196,13 +214,13 @@ public class DFA {
             Coord start = locateState(t.getStart()), end = locateState(t.getEnd());
 
             final int bufferFactor = 25; //How far arrow rises above horizontal/vertical
-            final double arrowSide = 0.15 * Game.BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
-            final int radiusOffset = (int) (0.75 * State.RAD); //To cover up the transition arc correctly with the arrow
+            final double arrowSide = 0.15 * BOX_DIM; //This is NOT the side length of an arrow, just an arbitrary scaling factor
+            final int radiusOffset = (int) (0.75 * STATE_RAD); //To cover up the transition arc correctly with the arrow
             final double recipSQRT2 = 0.71;
 
             if (!start.equals(end)) {
 
-                int xi = start.c * Game.BOX_DIM, yi = start.r * Game.BOX_DIM, xf = end.c * Game.BOX_DIM, yf = end.r * Game.BOX_DIM;
+                int xi = start.c * BOX_DIM, yi = start.r * BOX_DIM, xf = end.c * BOX_DIM, yf = end.r * BOX_DIM;
                 g2d.setPaint(Color.BLACK);
 
                 if (yf < yi && xf != xi) {
@@ -276,12 +294,12 @@ public class DFA {
             } else { //Start and end states are the same.
 
                 g2d.setPaint(Color.BLACK);
-                int x = start.c * Game.BOX_DIM, y = start.r * Game.BOX_DIM;
+                int x = start.c * BOX_DIM, y = start.r * BOX_DIM;
 
                 int xLabelOffset = t.getChars().equals("01") ? 7 : 3; //Guesswork.
-                g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4 * State.RAD));
+                g2d.drawString(t.getChars(), x - xLabelOffset, y - (int) (4 * STATE_RAD));
 
-                g2d.drawOval(x - (int) (State.RAD), y - 4 * State.RAD + 5, State.RAD * 2, State.RAD * 3);
+                g2d.drawOval(x - (int) (STATE_RAD), y - 4 * STATE_RAD + 5, STATE_RAD * 2, STATE_RAD * 3);
 
                 int[] arrowXCoordinates = {
                         (int) (x + 0.6 * radiusOffset),
@@ -301,15 +319,15 @@ public class DFA {
     }
 
     public void handleClick(double x, double y) {
-        int r = (int) Math.round(y / Game.BOX_DIM);
-        int c = (int) Math.round(x / Game.BOX_DIM);
-        double xGrid = Game.BOX_DIM * c;
-        double yGrid = Game.BOX_DIM * r;
+        int r = (int) Math.round(y / BOX_DIM);
+        int c = (int) Math.round(x / BOX_DIM);
+        double xGrid = BOX_DIM * c;
+        double yGrid = BOX_DIM * r;
         double dx = Math.abs(x - xGrid);
         double dy = Math.abs(y - yGrid);
         double dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < CLICK_RAD) {
-            addState(r, c, new State(false));
+            addState(r, c, new State(false, BOX_DIM, STATE_RAD));
         }
     }
 
@@ -366,8 +384,8 @@ public class DFA {
      * @return A coordinate object representing the grid space nearest a set of coordinates,
      */
     public Coord nearestGridSpace(int x_int, int y_int) {
-        int r = (int) Math.round((double) y_int / Game.BOX_DIM);
-        int c = (int) Math.round((double) x_int / Game.BOX_DIM);
+        int r = (int) Math.round((double) y_int / BOX_DIM);
+        int c = (int) Math.round((double) x_int / BOX_DIM);
         return new Coord(r, c);
     }
 
@@ -381,8 +399,8 @@ public class DFA {
      */
     public boolean onStateSpace(int x, int y) {
         Coord loc = nearestGridSpace(x, y);
-        double xGrid = Game.BOX_DIM * loc.c;
-        double yGrid = Game.BOX_DIM * loc.r;
+        double xGrid = BOX_DIM * loc.c;
+        double yGrid = BOX_DIM * loc.r;
         double dx = Math.abs(x - xGrid);
         double dy = Math.abs(y - yGrid);
         double dist = Math.sqrt(dx * dx + dy * dy);

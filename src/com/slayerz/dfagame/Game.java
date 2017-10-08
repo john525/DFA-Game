@@ -15,6 +15,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -55,11 +56,28 @@ public class Game {
     private int currentX, currentY;
     private boolean drawingTransition;
 
-    public static final int DIM = 800, LINES = 5; //Size of play area (DFA creation space)
-    public static final int BOX_DIM = (int) (((double) DIM) / ((double) (LINES)));
-
     /**
-     * Entry poiunt. Creates and runs a new game.
+     * Pixels on the shorter dimension of the display
+     */
+    public final int DIM;
+    
+    /**
+     * Numbers of lines on the grid
+     */
+    public static final int LINES = 5;
+    
+    /**
+     * The width of the squares on the grid
+     */
+    public final int BOX_DIM;
+    
+    /**
+     * Size in pixels allocated for bottom panel
+     */
+    public static final int PANEL_SIZE = 50;
+    
+    /**
+     * Entry point. Creates and runs a new game.
      * @param args
      */
     public static void main(String[] args) {
@@ -71,12 +89,23 @@ public class Game {
      * Creates a new DFA.
      */
     public Game() {
-        alt = shift = ctrl = false;
+    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    	
+    	// Want to fit to height or width, whichever is shorter
+    	if (screenSize.getHeight() + PANEL_SIZE < screenSize.getWidth()) {
+    		DIM = (int) screenSize.getHeight() - (PANEL_SIZE + 60);
+    	} else {
+    		DIM = (int) screenSize.getWidth();
+    	}
+    	
+    	BOX_DIM = (int) (((double) DIM) / ((double) (LINES)));
+    	
+    	alt = shift = ctrl = false;
         startX = startY = -10;
         currentX = currentY = 0;
         drawingTransition = false;
 
-        dfa = new DFA();
+        dfa = new DFA(BOX_DIM);
     }
 
     /**
@@ -84,7 +113,7 @@ public class Game {
      */
     public void go() {
         frame = new JFrame("Slayyy");
-        frame.setSize(DIM, DIM + 150);
+        frame.setSize(DIM, DIM + PANEL_SIZE);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setResizable(false);
