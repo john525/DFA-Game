@@ -339,8 +339,14 @@ public class DFA {
     }
 
     public void addTransition(Coord loc, Coord locf, String str) {
+    	
+    	if (str.equals("")){ // Do nothing if string is empty
+    		return;
+    	}
+    	
         State q1 = states.get(loc);
         State q2 = states.get(locf);
+        
         //Check if transitions already exists
         if (transitions.contains(new Transition(q1, q2, str)) || transitions.contains(new Transition(q1, q2, "01"))) {
             JOptionPane.showMessageDialog(null, "Transition Already Exists", "Error", JOptionPane.ERROR_MESSAGE);
@@ -426,10 +432,15 @@ public class DFA {
         String s = (String) JOptionPane.showInputDialog(null, "Which of the following characters should lead from state q_1 to q_2?",
                 "Specify transition character", JOptionPane.PLAIN_MESSAGE, null, opts, "0");
 
+        // Keeps from crashing when .equals is called on a null pointer
+        if (s == null) {
+        	s = "";
+        }
+        
         if (s.equals("0 or 1")) {
             s = "01";
         }
-
+                
         return s;
     }
 
@@ -444,8 +455,8 @@ public class DFA {
     /**
      * Creates a transition from a state to itself.
      *
-     * @param x The x value of the onsreen location of the state to receive such a transition.
-     * @param y The y value of the onsreen location of the state to receive such a transition.
+     * @param x The x value of the onscreen location of the state to receive a transition.
+     * @param y The y value of the onscreen location of the state to receive a transition.
      */
     public void handleDoubleClick(int x, int y) {
         if (onState(x, y) && onStateSpace(x, y)) {
@@ -460,7 +471,7 @@ public class DFA {
     }
 
     /**
-     * Represetns a location in terms of row and column on our game grid.
+     * Represents a location in terms of row and column on our game grid.
      */
     private class Coord {
         private int r;
