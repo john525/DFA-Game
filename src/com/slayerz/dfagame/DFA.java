@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.*;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.builder.HashCodeBuilder; 
 
 import javax.swing.*;
 
@@ -349,7 +350,7 @@ public class DFA {
         while (it.hasNext()) {
             Transition t = it.next();
             if (t.connectsTo(s)) {
-                transitionFunction.RemoveRule(t);
+                transitionFunction.removeRule(t);
                 it.remove();
             }
         }
@@ -364,16 +365,50 @@ public class DFA {
     	
         State q1 = states.get(loc);
         State q2 = states.get(locf);
+        Transition search = new Transition(q1, q2, str);
         
-        //Check if transitions already exists
-        if (transitions.contains(new Transition(q1, q2, str)) || transitions.contains(new Transition(q1, q2, "01"))) {
-            JOptionPane.showMessageDialog(null, "Transition Already Exists", "Error", JOptionPane.ERROR_MESSAGE);
-            return; //TODO Fix this weird shit
+        System.out.println(search.hashCode());
+        
+        // This checks if there is a transition already between the same states or "semiequal"
+        if (transitions.contains(search)) {
+        	// This then finds the that transition and updates it
+        	// NOTE: This could be more efficient if transitions were a map instead of set
+        	
+        	List<Transition> list = new ArrayList<Transition>(transitions);
+        	Transition target = null;
+        	
+        	// Looks through and finds the transition that is semiequal 
+        	for (Transition t : list) {
+        		if (t.equals(search)){
+        			target = t;
+        			break;
+        		}
+        	}
+        	
+        	// Checks if full equal, if it is does do nothing, else updates it
+        	if (!target.fullyEquals(search)) {
+        		if (target.getChars() == "1" && search.getChars() == "0") {
+        			transitionFunction.removeRule(target);
+        			target.setChars("01");
+        			transitionFunction.addRule(target);
+        		} else if (target.getChars() == "0" && search.getChars() == "1") {
+        			transitionFunction.removeRule(target);
+        			target.setChars("01");
+        			transitionFunction.addRule(target);
+        		}
+        	}
+        	return;
+        	
+        } else {
+        	
+        	if (q1 == null || q2 == null) {
+        		return;
+        	}
+        	
+        	transitions.add(search);
+        	transitionFunction.addRule(search);
+        	return;
         }
-        if (q1 == null || q2 == null) return;
-        Transition t = new Transition(q1, q2, str);
-        transitions.add(t);
-        transitionFunction.AddRule(t);
     }
 
     /**
@@ -509,11 +544,6 @@ public class DFA {
         }
 
         @Override
-        public int hashCode() {
-            return (r + c) % 7;
-        }
-
-        @Override
         public boolean equals(Object o) {
             if (o instanceof Coord) {
                 Coord k = (Coord) o;
@@ -521,7 +551,12 @@ public class DFA {
             }
             return false;
         }
-
+        
+        @Override
+        public int hashCode() {
+        	return new HashCodeBuilder(11, 37).append(r).append(c).toHashCode();
+        }
+        
         @Override
         public String toString() {
             return "(r=" + r + ",c=" + c + ")";

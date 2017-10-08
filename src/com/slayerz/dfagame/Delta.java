@@ -1,9 +1,8 @@
 package com.slayerz.dfagame;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Semaphore;
+import org.apache.commons.lang3.builder.HashCodeBuilder; 
 
 /**
  * Represents the transition function of a DFA.
@@ -15,14 +14,14 @@ public class Delta {
         transitionRules = new ArrayList<Rule>();
     }
 
-    public void AddRule(Transition transition) {
+    public void addRule(Transition transition) {
         char[] symbols = transition.getChars().toCharArray();
         for (char c : symbols) {
             transitionRules.add(new Rule(transition.getStart(), transition.getEnd(), c));
         }
     }
 
-    public void RemoveRule(Transition transition) {
+    public void removeRule(Transition transition) {
         char[] symbols = transition.getChars().toCharArray();
         
         for (char c : symbols) {
@@ -87,6 +86,11 @@ public class Delta {
         		return start == r.getStart() && end == r.getEnd() && symbol == r.getSymbol();
         	}
         	return false;
+        }
+        
+        @Override
+        public int hashCode() {
+        	return new HashCodeBuilder(17, 97).append(start).append(end).append(symbol).toHashCode();
         }
     }
 }
