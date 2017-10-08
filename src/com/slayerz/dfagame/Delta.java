@@ -3,6 +3,7 @@ package com.slayerz.dfagame;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Represents the transition function of a DFA.
@@ -22,19 +23,19 @@ public class Delta {
     }
 
     public void RemoveRule(Transition transition) {
-        Iterator<Rule> i = transitionRules.iterator();
-
         char[] symbols = transition.getChars().toCharArray();
+        
         for (char c : symbols) {
-            while (i.hasNext()) {
-                Rule r = i.next();
-
+        	for (int i = 0; i < transitionRules.size(); i++) {
+        		Rule r = transitionRules.get(i);
+        		
                 if (r.getStart().equals(transition.getStart()) &&
                         r.getEnd().equals(transition.getEnd()) &&
                         r.getSymbol() == c) {
                     transitionRules.remove(r);
+                    i--;
                 }
-            }
+        	}
         }
     }
 
@@ -55,7 +56,6 @@ public class Delta {
 
         return null;
     }
-
 
     private class Rule {
         public State start;
@@ -78,6 +78,15 @@ public class Delta {
 
         public char getSymbol() {
             return symbol;
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+        	if (o instanceof Rule){
+        		Rule r = (Rule) o;
+        		return start == r.getStart() && end == r.getEnd() && symbol == r.getSymbol();
+        	}
+        	return false;
         }
     }
 }

@@ -272,7 +272,6 @@ public class Game {
                 shift = true;
             } else if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
                 ctrl = true;
-                System.out.println("ct");
             } else if (e.getKeyCode() == KeyEvent.VK_ALT) {
                 alt = true;
             }
